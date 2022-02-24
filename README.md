@@ -44,8 +44,10 @@ cp platanus_3D <installation_path>
 ## Synopsis
 ### Inputs
 * Input assembly (required)
-    * Haplotype-aware style input: primaryBubble.fa secondaryBubble.fa nonBubble.fa
-    * Pseudo-haplotype style input: contigs.fa
+    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):
+      primaryBubble.fa secondaryBubble.fa nonBubble.fa
+    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):
+      contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)
     * Illumina paired-end: PE_1.fq PE_2.fq (optional)
@@ -53,8 +55,9 @@ cp platanus_3D <installation_path>
     * PacBio/Oxford-Nanopore long reads  : longread.fq (optional)
 
 ### Commands
+
+* for Haplotype-aware style input
 ```
-#for Haplotype-aware style input
 platanus_3D solveDBG -3D \
 -c nonBubble.fa
 -b primaryBubble.fa secondaryBubble.fa\
@@ -63,8 +66,10 @@ platanus_3D solveDBG -3D \
 -p longread.fq \
 -HIC HIC_1.fq HIC_2.fq \
 2>3D.log
+```
 
-#for Pseudo-haplotype style input
+* for Pseudo-haplotype style input
+```
 platanus_3D solveDBG -3D \
 -cph contigs.fa
 -IP1 PE_1.fq PE_2.fq \

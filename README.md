@@ -44,9 +44,9 @@ cp platanus_3D <installation_path>
 ## Synopsis
 ### Inputs
 * Input assembly (required)
-    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):
+    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):  
       primaryBubble.fa secondaryBubble.fa nonBubble.fa
-    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):
+    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):  
       contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)

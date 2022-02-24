@@ -1,15 +1,15 @@
 # Platanus-allee README.md
 
 ## Description
-Platanus-allee is a de novo haplotype assembler (phasing tool), which assembles each haplotype
-sequence in a diploid genome. Compared to the read mapping-based haplotype phasing tools,
-Platanus-allee is especially useful to analyze highly divergent (heterozygous) regions in
-which haplotypes extremely differ. This tool requires at least one Illumina library and can
-accepts Illumina mate-pairs, PacBio/Oxford-Nanopore long reads and 10X linked-reads. In addition
-to the haplotype phasing function, Platanus-allee can construct consensus sequences (pseudo
-haploid genome), which have mosaic structures of haplotypes (i.e., maternal and paternal haplotypes
-are mixed) and can be used as the conventional "draft genome". Note that Platanus-allee was
-previously called "Platanus2" and renamed according to emphasize the difference from Platanus,
+Platanus-allee is a de novo haplotype assembler (phasing tool), which assembles each haplotype 
+sequence in a diploid genome. Compared to the read mapping-based haplotype phasing tools, 
+Platanus-allee is especially useful to analyze highly divergent (heterozygous) regions in 
+which haplotypes extremely differ. This tool requires at least one Illumina library and can 
+accepts Illumina mate-pairs, PacBio/Oxford-Nanopore long reads and 10X linked-reads. In addition 
+to the haplotype phasing function, Platanus-allee can construct consensus sequences (pseudo 
+haploid genome), which have mosaic structures of haplotypes (i.e., maternal and paternal haplotypes 
+are mixed) and can be used as the conventional "draft genome". Note that Platanus-allee was 
+previously called "Platanus2" and renamed according to emphasize the difference from Platanus, 
 which is the tool to assemble consensus sequences of haplotypes.
 
 ## Version
@@ -19,12 +19,12 @@ v2.2.2
 <http://platanus.bio.titech.ac.jp/>
 
 ## Author
-Rei Kajitani at Tokyo Institute of Technology wrote key source codes.
+Rei Kajitani at Tokyo Institute of Technology wrote key source codes.  
 Address for this tool: <platanus@bio.titech.ac.jp>
 
 
 ## Requirements
-* GCC
+* GCC 
     - <https://gcc.gnu.org/>
     - version >= 4.4, with OpenMP
     - To compile the source code.
@@ -36,8 +36,8 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 * Long Ranger
     - <https://support.10xgenomics.com/genome-exome/software/pipelines/latest/what-is-long-ranger>
     - Only required to prepare 10X linked-reads input (barcoded.fastq).
-
-
+   
+   
 ## Installation
 ```sh
 make
@@ -108,8 +108,8 @@ platanus_allee assemble [OPTIONS] 2>log
     PREFIX_kmerFrq.tsv
 
 PREFIX is specified by -o
-
-
+  
+  
 ## Haplotype phasing usage
 ### Command
 ```sh
@@ -147,8 +147,8 @@ platanus_allee phase [OPTIONS] 2>log
 
 
 PREFIX is specified by -o
-
-
+  
+  
 ## Consensus scaffold construction usage
 ### Command
 ```sh
@@ -183,8 +183,8 @@ platanus_allee consensus [OPTIONS] 2>log
 
 
 PREFIX is specified by -o
-
-
+  
+  
 ## Dividing erroneous sequences usage
 ### Command
 ```sh
@@ -212,11 +212,11 @@ PREFIX is specified by -o
 ---
 ## Notes
 * Options related to run time
-Although -t (number of threads) of all commands and -m (memory amount) of the "assemble" command are
+Although -t (number of threads) of all commands and -m (memory amount) of the "assemble" command are 
 not mandatory to run, it is recommended to set the values adjusting your machine-environment.
-These options may severely effect the run time.
-e.g.,
-Available number of threads and memory amount are 12 and 256GB, respectively.
+These options may severely effect the run time.  
+e.g.,  
+Available number of threads and memory amount are 12 and 256GB, respectively.  
 ->  -t 12 -m 256
 
 * Compressed input files
@@ -225,25 +225,25 @@ Formats are auto-detected. Internally, "file -bL", "gzip -cd" and "bzip2 -cd" co
 used in most of the UNIX OSs, are utilized.
 
 * Minimap2
-This tool is used to align PacBio/Oxford-Nanopore long reads and included in Platanus-allee package
-as the directory of "minimap2-2.0-r191". When long reads are input through the -p option of "phase"
-and "consensus" commands, please check Minimap2 is installed as "minimap2" command or specify the
+This tool is used to align PacBio/Oxford-Nanopore long reads and included in Platanus-allee package 
+as the directory of "minimap2-2.0-r191". When long reads are input through the -p option of "phase" 
+and "consensus" commands, please check Minimap2 is installed as "minimap2" command or specify the 
 path of Minimap2 using the -mapper option.
 
 * 10X linked-reads input
-Platanus-allee accepts barcoded fastq files, which have the barcode information in name lines
-(@...) as the "BX:Z:" tags. These files, "barcoded.fastq", can be generated using the
-"longranger basic" command of Long Ranger (https://support.10xgenomics.com/genome-exome/software/pipelines/latest/what-is-long-ranger).
+Platanus-allee accepts barcoded fastq files, which have the barcode information in name lines 
+(@...) as the "BX:Z:" tags. These files, "barcoded.fastq", can be generated using the 
+"longranger basic" command of Long Ranger (https://support.10xgenomics.com/genome-exome/software/pipelines/latest/what-is-long-ranger).  
 e.g.
 ```sh
 longranger basic --fastqs=/raw/fastq/directory --id=your_id --sample=your_sample_name
 # Result: your_id/outs/barcoded.fastq.gz
 ```
 
-* Paired-end (mate-pair) input
-The "phase" and "consensus" accept paired-end and/or mate-pair libraries. Paired libraries are
-classified into "inward-pair" and "outward-pair" according to the sequence direction.
-For file formats, separate and interleaved files can be input through -IP (-OP) and -ip (-op)
+* Paired-end (mate-pair) input  
+The "phase" and "consensus" accept paired-end and/or mate-pair libraries. Paired libraries are 
+classified into "inward-pair" and "outward-pair" according to the sequence direction. 
+For file formats, separate and interleaved files can be input through -IP (-OP) and -ip (-op) 
 options, respectively.
 
 Inward-pair (usually called "paired-end", accepted in options "-IP" or "-ip"):
@@ -251,11 +251,11 @@ Inward-pair (usually called "paired-end", accepted in options "-IP" or "-ip"):
     FWD --->
         5' -------------------- 3'
         3' -------------------- 5'
-                        <--- REV
+                        <--- REV 
 
 Outward-pair (usually called "mate-pair", accepted in options "-OP" or "-op"):
 
-                        ---> REV
+                        ---> REV 
         5' -------------------- 3'
         3' -------------------- 5'
     FWD <---
@@ -273,7 +273,7 @@ Corresponding options:
     -OP3 MP2k_1.fq MP2k_2.fq
 
 * Compressed input files
-Compressed files can be input using the process substitution function ("<(command)") of bash/zsh
+Compressed files can be input using the process substitution function ("<(command)") of bash/zsh 
 without temporary uncompressed files.
 e.g.
 ```sh

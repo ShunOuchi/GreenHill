@@ -49,7 +49,7 @@ cp platanus_allee <installation_path>
 ## Synopsis
 ### Inputs
 * Illumina paired-end: PE_1.fq PE_2.fq (mandatory)
-* Illumina mate-pair : MP_1.fq MP_2.fq (optional)
+    * Illumina mate-pair : MP_1.fq MP_2.fq (optional)
 * PacBio long reads  : PacBio.fq (optional)
 * 10X linked-reads   : 10X_barcoded.fq (optional)
 

@@ -1,16 +1,9 @@
-# Platanus-allee README.md
+# Platanus-3D README.md
 
 ## Description
-Platanus-allee is a de novo haplotype assembler (phasing tool), which assembles each haplotype
-sequence in a diploid genome. Compared to the read mapping-based haplotype phasing tools,
-Platanus-allee is especially useful to analyze highly divergent (heterozygous) regions in
-which haplotypes extremely differ. This tool requires at least one Illumina library and can
-accepts Illumina mate-pairs, PacBio/Oxford-Nanopore long reads and 10X linked-reads. In addition
-to the haplotype phasing function, Platanus-allee can construct consensus sequences (pseudo
-haploid genome), which have mosaic structures of haplotypes (i.e., maternal and paternal haplotypes
-are mixed) and can be used as the conventional "draft genome". Note that Platanus-allee was
-previously called "Platanus2" and renamed according to emphasize the difference from Platanus,
-which is the tool to assemble consensus sequences of haplotypes.
+Platanus-3D is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
+Platanus-3D generates chromosome-level haplotypes by scaffolding and phasing
+the input contigs using a combination of information from Hi-C and other reads (PE, MP, CLR).
 
 ## Version
 v1.0.0
@@ -44,9 +37,9 @@ cp platanus_3D <installation_path>
 ## Synopsis
 ### Inputs
 * Input assembly (required)
-    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):  
+    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):
       primaryBubble.fa secondaryBubble.fa nonBubble.fa
-    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):  
+    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):
       contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)

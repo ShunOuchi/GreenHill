@@ -38,8 +38,10 @@ cp platanus_3D <installation_path>
 ### Inputs
 * Input assembly (required)
     * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):
+
       primaryBubble.fa secondaryBubble.fa nonBubble.fa
     * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):
+
       contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)
@@ -110,16 +112,19 @@ platanus_3D solveDBG -3D [OPTIONS] 2>log
 ---
 ## Notes
 * Compressed input files
+
 Both uncompressed and compressed (gzip or bzip2) FASTA/FASTQ files are accepted.
 Formats are auto-detected. Internally, "file -bL", "gzip -cd" and "bzip2 -cd" commands, which can be
 used in most of the UNIX OSs, are utilized.
 
 * Minimap2
+
 This tool is used to align PacBio/Oxford-Nanopore long reads.
 When long reads are input through the -p option, please check Minimap2 is installed as "minimap2" command
 or specify the path of Minimap2 using the -mapper option.
 
 * Paired-end (mate-pair) input
+
 Paired libraries are classified into "inward-pair" and "outward-pair" according to the sequence direction.
 For file formats, separate and interleaved files can be input through -IP (-OP) and -ip (-op)
 options, respectively.

@@ -115,10 +115,9 @@ Formats are auto-detected. Internally, "file -bL", "gzip -cd" and "bzip2 -cd" co
 used in most of the UNIX OSs, are utilized.
 
 * Minimap2
-This tool is used to align PacBio/Oxford-Nanopore long reads and included in Platanus-allee package
-as the directory of "minimap2-2.0-r191". When long reads are input through the -p option of "phase"
-and "consensus" commands, please check Minimap2 is installed as "minimap2" command or specify the
-path of Minimap2 using the -mapper option.
+This tool is used to align PacBio/Oxford-Nanopore long reads.
+When long reads are input through the -p option, please check Minimap2 is installed as "minimap2" command
+or specify the path of Minimap2 using the -mapper option.
 
 * Paired-end (mate-pair) input
 Paired libraries are classified into "inward-pair" and "outward-pair" according to the sequence direction.
@@ -151,13 +150,3 @@ Corresponding options:
     -ip2 PE500_pair.fq \
     -OP3 MP2k_1.fq MP2k_2.fq
 
-* Compressed input files
-Compressed files can be input using the process substitution function ("<(command)") of bash/zsh
-without temporary uncompressed files.
-e.g.
-```sh
-# Files compressed by gzip
-platanus_allee assemble -f <(zcat PE_1.fq.gz) <(zcat PE_2.fq.gz)
-# Files compressed by bzip2
-platanus_allee assemble -f <(bzcat PE_1.fq.bz2) <(bzcat PE_2.fq.bz2)
-```

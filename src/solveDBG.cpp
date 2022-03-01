@@ -1844,7 +1844,7 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 			oss << " " << *itr;
 	}
 	//oss << " | cut -f1-11 "; //deleted by ouchi
-	oss << " | sort -V -T " << optionSingleArgs["-tmp"]; //added by ouchi
+	oss << " | sort -s -k 1,1 -T " << optionSingleArgs["-tmp"]; //added by ouchi
 	oss << " >" << outFilename;
 
 	std::cerr << "Executing minimap2 ..." << std::endl;

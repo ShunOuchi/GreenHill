@@ -112,7 +112,7 @@ PREFIX is specified by -o
 ---
 ## Example
 Below is showing examples how to run Platanus-3D using test dataset.
-The test dataset is the simulated diploid dataset of Caenorhabditis elegans chr1.
+The test dataset is the simulated diploid dataset of _Caenorhabditis elegans_ chr1.
 ### Example 1. I have Platanus-allee assembly (Haplotype-aware style input)
 ```
 platanus_3D \

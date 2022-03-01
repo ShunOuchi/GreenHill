@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -63,7 +63,7 @@ struct binstr_t {
   {
     return fwrite(value, sizeof(u64_t), (len+31)/32, fp);
   }
-  
+
   inline size_t readTemporaryFile(FILE *fp)
   {
     return fread(value, sizeof(u64_t), (len+31)/32, fp);
@@ -73,12 +73,12 @@ struct binstr_t {
   {
     value[pos/32] = (value[pos/32] & ~(0x3ull << ((pos%32)*2))) | (static_cast<u64_t>(val) << ((pos%32)*2));
   }
-  
+
   inline unsigned long long get(unsigned pos)
   {
     return (value[pos/32] >> ((pos%32)*2)) & 3;
   }
-    
+
   inline void convertToVector(std::vector<u64_t> &vec)
   {
     unsigned long long n = (len + 31) / 32;
@@ -299,7 +299,7 @@ struct BinstrBase {
   BinstrBase():value(NULL),len(0) {}
   BinstrBase(unsigned long long l):value(NULL), len(l) {}
   BinstrBase(const BinstrBase& rhs):value(NULL),len(rhs.len)
-  { 
+  {
   }
   virtual ~BinstrBase()
   {
@@ -312,7 +312,7 @@ struct BinstrBase {
   {
     return fwrite(value, sizeof(u64_t), (len+31)/32, fp);
   }
-  
+
   inline size_t readTemporaryFile(FILE *fp)
   {
     return fread(value, sizeof(u64_t), (len+31)/32, fp);
@@ -322,12 +322,12 @@ struct BinstrBase {
   {
     value[pos/32] = (value[pos/32] & ~(0x3ull << ((pos%32)*2))) | (static_cast<u64_t>(val) << ((pos%32)*2));
   }
-  
+
   inline unsigned long long get(unsigned pos)
   {
     return (value[pos/32] >> ((pos%32)*2)) & 3;
   }
-    
+
   inline void convertToVector(std::vector<u64_t> &vec)
   {
     unsigned long long n = (len + 31) / 32;

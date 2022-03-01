@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -48,8 +48,8 @@ public:
     KmerBase &operator=(const KmerBase &) = default;
     virtual ~KmerBase() = default;
 
-    
-    
+
+
     static void revCom_u64(unsigned long long &t) {
     t ^= UINT64_MAX;
     t = ((t&0x3333333333333333ull)<<2) | ((t&0xCCCCCCCCCCCCCCCCull)>>2);
@@ -110,7 +110,7 @@ public:
     {
         return fread(&this->reverse, sizeof(Kmer31Key), 1, fp);
     }
-    
+
     size_t readKey(FILE *fp, Kmer31Key &key) const
     {
         return fread(&key, sizeof(Kmer31Key), 1, fp);
@@ -237,7 +237,7 @@ public:
     size_t writeKey(FILE *fp, const BASE &key) const
     {
         const Kmer31Key *v = key.value;
-        
+
         for (unsigned long i = 0; i < (key.len + 31) / 32; ++i) {
             fwrite(v++, sizeof(Kmer31Key), 1, fp);
         }
@@ -255,7 +255,7 @@ public:
     {
         this->forward.set(position, value);
     }
-    
+
     void setReverse(const unsigned position, const unsigned char value)
     {
         this->reverse.set(position, value);

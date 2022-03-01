@@ -1,34 +1,34 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "common.h"
-#include "assemble.h"
+//#include "assemble.h"
 #include "scaffold.h"
-#include "gapClose.h"
-#include "merge.h"
-#include "iterate.h"
-#include "polish.h"
+//#include "gapClose.h"
+//#include "merge.h"
+//#include "iterate.h"
+//#include "polish.h"
 #include "solveDBG.h"
-#include "phase.h"
-#include "consensus.h"
-#include "divide.h"
+//#include "phase.h"
+//#include "consensus.h"
+//#include "divide.h"
 
 using std::cerr;
 using std::endl;
@@ -38,7 +38,7 @@ using std::endl;
 //////////////////////////////////////////////////////////////////////////////////////
 void Usage(void)
 {
-    cerr << "Usage: platanus_allee Command [options]\n\nCommand: assemble, phase, consensus (solve_DBG, gap_close, divide)" << endl;
+    cerr << "Usage: platanus_3d [options]" << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ void Usage(void)
 //////////////////////////////////////////////////////////////////////////////////////
 void ShowVersion(void)
 {
-    cerr << "platanus_allee version: " << platanus::ConstParam::VERSION << endl;
+    cerr << "platanus_3D version: " << platanus::ConstParam::VERSION << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -71,11 +71,12 @@ int main(int argc, char **argv)
 	ShowVersion();
     ShowArgs(argc, argv);
     std::unique_ptr<BaseCommand> command;
+    command.reset(new SolveDBG()); //added by ouchi
     if (argc > 1) {
         if (strcmp(argv[1], "-v") == 0) {
             return 0;
         }
-        if (strcmp(argv[1], "assemble") == 0) {
+        /*if (strcmp(argv[1], "assemble") == 0) {
             command.reset(new Assemble());
         } else if (strcmp(argv[1], "phase") == 0) {
             command.reset(new Phase());
@@ -95,14 +96,14 @@ int main(int argc, char **argv)
             command.reset(new Polish());
         } else if (strcmp(argv[1], "solve_DBG") == 0) {
             command.reset(new SolveDBG());
-		}
+		}*/ //deleted by ouchi
 
         if (!command) {
             Usage();
             return 1;
         }
     } else {
-        Usage();
+        command->usage(); //edited by ouchi (command->)
         return 1;
     }
     if (!command->parseArgs(argc, argv)) {

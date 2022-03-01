@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -52,7 +52,7 @@ private:
     virtual bool parseArgs(int argc, char **argv)
     {
         if (BaseCommand::parseArgs(argc, argv)) {
-            int optInd = 2;
+            int optInd = 1; //edited by ouchi (2->1)
             while (optInd < argc) {
                 if (strstr(argv[optInd], "-n") == argv[optInd]) {
                     int pairNum = divideArgvInt(argv[optInd]);

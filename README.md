@@ -3,13 +3,10 @@
 ## Description
 Platanus-3D is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
 Platanus-3D generates chromosome-level haplotypes by scaffolding and phasing
-the input contigs using a combination of information from Hi-C and other reads (PE, MP, CLR).
+the input contigs using a combination of information from Hi-C and other reads (PE, MP, LongRead).
 
 ## Version
 v1.0.0
-
-## Web site
-<http://platanus.bio.titech.ac.jp/>
 
 ## Author
 Shun Ouchi and Rei Kajitani at Tokyo Institute of Technology wrote key source codes.
@@ -28,6 +25,7 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 
 ## Installation
 ```sh
+git clone https://github.com/ShunOuchi/Platanus-3D.git
 cd src
 make
 cp platanus_3D <installation_path>
@@ -37,11 +35,11 @@ cp platanus_3D <installation_path>
 ## Synopsis
 ### Inputs
 * Input assembly (required)
-    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):
-
+    * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):<br>
       primaryBubble.fa secondaryBubble.fa nonBubble.fa
-    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip), [Canu](https://github.com/marbl/canu)):
-
+    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip)):<br>
+      contigs.fa
+    * Mixed-haplotype style input (such as [Canu](https://github.com/marbl/canu)):<br>
       contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)
@@ -53,9 +51,9 @@ cp platanus_3D <installation_path>
 
 * for Haplotype-aware style input
 ```
-platanus_3D solveDBG -3D \
--c nonBubble.fa
--b primaryBubble.fa secondaryBubble.fa\
+platanus_3D \
+-c nonBubble.fa \
+-b primaryBubble.fa secondaryBubble.fa \
 -IP1 PE_1.fq PE_2.fq \
 -OP2 MP_1.fq MP_2.fq \
 -p longread.fq \
@@ -63,10 +61,10 @@ platanus_3D solveDBG -3D \
 2>3D.log
 ```
 
-* for Pseudo-haplotype style input
+* for Pseudo-haplotype or Mixed-haplotype style input
 ```
-platanus_3D solveDBG -3D \
--cph contigs.fa
+platanus_3D \
+-cph contigs.fa \
 -IP1 PE_1.fq PE_2.fq \
 -OP2 MP_1.fq MP_2.fq \
 -p longread.fq \
@@ -75,19 +73,19 @@ platanus_3D solveDBG -3D \
 ```
 
 ### Final output
-    afterPhase.fa (phased diploid scaffolds)
+    out_afterPhase.fa (phased diploid scaffolds)
 
 ---
 ## Usage
 ### Command
 ```sh
-platanus_3D solveDBG -3D [OPTIONS] 2>log
+platanus_3D [OPTIONS] 2>log
 ```
 ### Options
     -o STR                             : prefix of output file and directory (do not use "/", default out, length <= 200)
     -c FILE1 [FILE2 ...]               : contig (or scaffold) file (fasta format; for Haplotype-aware style input)
     -b FILE1 [FILE2 ...]               : bubble seq file (fasta format; for Haplotype-aware style input)
-    -cph FILE1 [FILE2 ...]             : contig (or scaffold) file (fasta format; for Pseudo-haplotype style input; only effective without -c, -b option)
+    -cph FILE1 [FILE2 ...]             : contig (or scaffold) file (fasta format; for Pseudo-haplotype or Mixed-haplotype style input; only effective without -c, -b option)
     -ip{INT} PAIR1 [PAIR2 ...]         : lib_id inward_pair_file (interleaved file, fasta or fastq)
     -IP{INT} FWD1 REV1 [FWD2 REV2 ...] : lib_id inward_pair_files (separate forward and reverse files, fasta or fastq)
     -op{INT} PAIR1 [PAIR2 ...]         : lib_id outward_pair_file (interleaved, fasta or fastq)
@@ -107,7 +105,40 @@ platanus_3D solveDBG -3D [OPTIONS] 2>log
    Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -hic and -HIC option.
 
 ### Outputs:
-   afterPhase.fa
+   PREFIX_ConsensusOutput.fa
+   PREFIX_afterPhase.fa
+
+PREFIX is specified by -o
+
+---
+## Example
+Below is showing examples how to run Platanus-3D using test dataset.
+The test dataset is the simulated diploid dataset of Caenorhabditis elegans chr1.
+###Example 1. I have Platanus-allee assembly (Haplotype-aware style input), PE, MP, LongRead, and Hi-C
+```
+platanus_3D \
+-c Platanus-allee_result/out_nonBubbleOther.fa \
+-b Platanus-allee_result/out_primaryBubble.fa Platanus-allee_result/out_secondaryBubble.fa \
+-IP1 reads/PE_1.fq reads/PE_2.fq \
+-OP2 reads/MP5k_1.fq reads/MP5k_2.fq \
+-OP3 reads/MP9k_1.fq reads/MP9k_2.fq \
+-p reads/longread.fq \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
+###Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input), LongRead, and Hi-C
+```
+platanus_3D \
+-cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
+-p reads/longread.fq \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
+###Example 3. I have Canu assembly (Mixed-haplotype style input), LongRead, and Hi-C
+```
+platanus_3D \
+-cph Canu_result/asm.contigs.fa \
+-p reads/longread.fq \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
 
 ---
 ## Notes

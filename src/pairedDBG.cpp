@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -1994,7 +1994,7 @@ void PairedDBG::markBubbleHeteroNode(const vector<long> &candidateNodeIndex, con
 
 void PairedDBG::calculateHeteroCoverage(const vector<long> &bubbleNodeIndex)
 {
-	const long MIN_NUM_BUBBLE = 10000;
+	//const long MIN_NUM_BUBBLE = 10000;
 	const double TRUNCATION_FACTOR = 2.0;
 
 	vector<char> bubbleNodeFlag(this->node.size(), 0);
@@ -7818,7 +7818,7 @@ void PairedDBG::setOppositeBubbleContigIDByEndMatch()
 //added by ouchi
 void PairedDBG::setOppositeBubbleContigIDByIndex()
 {
-	const double COVERAGE_THRESHOLD = HETERO_FORK_COVERAGE_THRESHOLD_FACTOR * this->heteroCoverage;
+	//const double COVERAGE_THRESHOLD = HETERO_FORK_COVERAGE_THRESHOLD_FACTOR * this->heteroCoverage;
 
 	if (this->contigBubbleInfo.empty())
 		this->contigBubbleInfo.resize(this->numContig);
@@ -13076,7 +13076,7 @@ void PairedDBG::searchConsensusPath(long startID, vector<vector<long> > &path, v
 
 
 //added by ouchi
-void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag)
+void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag, const string filePrefix)
 {
     const unsigned long currentMinLink = this->minLink;
     const long currentCutoffLength = this->cutoffLength;
@@ -13500,12 +13500,15 @@ void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag)
 		std::cerr << "Contactmap&MatePair True: " << numContactmapAndMateTrue << "\tFalse: " << numContactmapAndMateFalse << std::endl;
 		//
 
-        std::cerr << "Output HiCNode" << std::endl;
-        std::string outputName = "HiCNode_result_" + std::to_string(L) + ".fa";
-		if (lastFlag == 1)
-			outputName = "HiCNode_result_FINAL_" + std::to_string(L) + ".fa";
-			//outputName = "HiCNode_result_FINAL.fa";
-        outputHiCNode(outputName, numHiCNode, hicnode);
+        //std::cerr << "Output HiCNode" << std::endl;
+        //std::string outputName = "_HiCNode_result_" + std::to_string(L) + ".fa";
+		//if (lastFlag == 1)
+		//	outputName = "_HiCNode_result_FINAL_" + std::to_string(L) + ".fa";
+		//	//outputName = "HiCNode_result_FINAL.fa";
+        //outputHiCNode(filePrefix + outputName, numHiCNode, hicnode);
+        if (lastFlag == 1 && L == 1000000) {
+            outputHiCNode(filePrefix + "_ConsensusOutput.fa", numHiCNode, hicnode);
+        }
 
     }
 
@@ -16026,7 +16029,7 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long o
 //
 
 //added by ouchi
-void PairedDBG::phasing(const long numThread) {
+void PairedDBG::phasing(const long numThread, const string filePrefix) {
     std::cerr << "phasing" << std::endl;
 
     const long defaultTolerence = this->tolerence;
@@ -16700,7 +16703,7 @@ void PairedDBG::phasing(const long numThread) {
 
 	remakeConsensus(numNewConsensusBefore, newNodePoolSizeBefore, beforePhase);
 	fclose(beforePhase);
-	std::ofstream out("beforePhase.fa");
+	/*std::ofstream out(filePrefix + "_beforePhase.fa");
 	long numOutput = 0;
 	for (long i = 0; i < numConsensusNode; ++i) {
 		vector<char> tmpSeq;
@@ -16724,11 +16727,11 @@ void PairedDBG::phasing(const long numThread) {
 				out.put('\n');
 		}
 	}
-	out.close();
+	out.close();*/
 	remakeConsensus(numNewConsensusAfter, newNodePoolSizeAfter, afterPhase);
 	fclose(afterPhase);
-	std::ofstream out2("afterPhase.fa");
-	numOutput = 0;
+	std::ofstream out2(filePrefix + "_afterPhase.fa");
+	long numOutput = 0;
 	for (long i = 0; i < numConsensusNode; ++i) {
 		vector<char> tmpSeq;
 		++numOutput;
@@ -16754,7 +16757,7 @@ void PairedDBG::phasing(const long numThread) {
 	out2.close();
 	remakeConsensus(numNewConsensusAfter2, newNodePoolSizeAfter2, after2Phase);
 	fclose(after2Phase);
-	std::ofstream out3("after2Phase.fa");
+	/*std::ofstream out3(filePrefix + "_after2Phase.fa");
 	numOutput = 0;
 	for (long i = 0; i < numConsensusNode; ++i) {
 		vector<char> tmpSeq;
@@ -16778,7 +16781,7 @@ void PairedDBG::phasing(const long numThread) {
 				out3.put('\n');
 		}
 	}
-	out3.close();
+	out3.close();*/
 
 	remakeConsensus(numNewConsensusResult, newNodePoolSizeResult, resultPhase);
 	fclose(resultPhase);
@@ -17684,7 +17687,7 @@ void PairedDBG::outputHiCNode(const string &outFilename, const long numHiCNode, 
             }
         }
 
-        long min_start, max_end;
+        long min_start = -1, max_end = -1;
         if (newConsensus.numNode[0] > 0) {
             long start = newConsensus.node[0].front().start;
             long end = newConsensus.node[0].back().end;

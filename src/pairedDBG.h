@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -704,7 +704,7 @@ public:
 	void checkLinkBetweenHiCNodePair(std::vector<ConsensusPart> scaffold1, std::vector<ConsensusPart> scaffold2, std::vector<std::vector<long> > &physicalCoverage, std::vector<std::vector<long> > &diffCoverage, std::array<long, 5> &result);
 	//void makeConsensusPathEdge(const long numThread);
 	//void searchConsensusPath(long startID, std::vector<std::vector<long> > &path, std::vector<std::vector<char> > &h, std::vector<long> &lengths, std::vector<std::array<long, 2> > &numLinks);
-	void HiC_Scaffolding(const long numThread, long lastFlag);
+	void HiC_Scaffolding(const long numThread, long lastFlag, std::string filePrefix);
 	void calcHiCLinkScore(const long L, std::vector<HiCConsensusEdge> &es, long &numHiCNode, std::vector<HiCNode> &hicnode, std::vector<platanus::Position> &consensusPositionInHiCNode);
 	void updateHiCLinkScore(std::vector<long> dividedIDs, std::vector<long> newIDs, long ei, const long L, std::vector<HiCConsensusEdge> &es, long &numHiCNode, std::vector<HiCNode> &hicnode, std::vector<platanus::Position> &consensusPositionInHiCNode);
 	void compareHiCLinkScore(std::vector<ConsensusPart> scaffolda, std::vector<ConsensusPart> scaffoldb, std::vector<ConsensusPart> scaffolda2, std::vector<ConsensusPart> scaffoldb2);
@@ -717,7 +717,7 @@ public:
     std::array<std::array<long, 2>, 2> divideConsensusNode(long consensusID, long offset, long numThread, char mode);
     std::array<std::array<long, 2>, 2> divideNode(long nodeID, long offset, long numThread, char mode);
     std::array<std::array<long, 2>, 2> divideContig(long contigID, long offset, long numThread);
-	void phasing(const long numThread);
+	void phasing(const long numThread, const std::string filePrefix);
 	void getHeteroMPLinkScoreBetweenScaffold(const std::array<std::array<std::vector<ScaffoldPart>, 2>, 2> &scaffolds, std::array<long, 2> &sumLinkForHaplotype);
 	void getHeteroHiCLinkScoreBetweenScaffold(const std::array<std::array<std::vector<ScaffoldPart>, 2>, 2> &scaffolds, std::array<long, 2> &sumLinkForHaplotype);
 	void getHeteroMPandHiCLinkScoreBetweenBlock(const std::vector<std::array<std::vector<ScaffoldPart>, 2> > &blocks, const std::vector<std::vector<long> > heteroBlocks, std::vector<std::vector<std::array<long, 2> > > &LinkScore);

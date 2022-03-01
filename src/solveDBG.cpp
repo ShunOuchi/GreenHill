@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2018 Itoh Laboratory, Tokyo Institute of Technology
+Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-allee.
+This file is part of Platanus-3D.
 
-Platanus-allee is free software; you can redistribute it and/or modify
+Platanus-3D is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-allee is distributed in the hope that it will be useful,
+Platanus-3D is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
+with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -82,7 +82,7 @@ SolveDBG::SolveDBG()
 
     optionBool["-no_scaffold"] = false;
     optionBool["-unphase"] = false;
-    optionBool["-3D"] = false; //added by ouchi
+    optionBool["-3D"] = true; //added by ouchi
     optionBool["-reduce_redundancy"] = false;
 	optionBool["-divide_only"] = false;
 	optionBool["-simplify_junction"] = false;
@@ -110,22 +110,22 @@ SolveDBG::SolveDBG()
 //////////////////////////////////////////////////////////////////////////////////////
 void SolveDBG::usage(void) const
 {
-    std::cerr << "\nUsage: platanus_allee solveDBG [Options]\n"
+    std::cerr << "\nUsage: platanus_3D [Options]\n" //edited by ouchi (solveDBG)
               << "Options:\n"
               << "    -o STR                             : prefix of output file (default " << optionSingleArgs.at("-o") << ", length <= " << platanus::ConstParam::MAX_FILE_LEN << ")\n"
-              << "    -c FILE1 [FILE2 ...]               : contig_file (fasta format)\n"
-              << "    -b FILE1 [FILE2 ...]               : bubble_seq_file (fasta format)\n"
+              << "    -c FILE1 [FILE2 ...]               : contig_file (fasta format; for Haplotype-aware style input)\n"
+              << "    -b FILE1 [FILE2 ...]               : bubble_seq_file (fasta format; for Haplotype-aware style input)\n"
+              << "    -cph FILE1 [FILE2 ...]             : contig_file (fasta format; for Pseudo-haplotype or Mixed-haplotype style input; only effective without -c, -b option)\n" //added by ouchi
               << "    -ip{INT} PAIR1 [PAIR2 ...]         : lib_id inward_pair_file (reads in 1 file, fasta or fastq)\n"
               << "    -IP{INT} FWD1 REV1 [FWD2 REV2 ...] : lib_id inward_pair_files (reads in 2 files, fasta or fastq)\n"
               << "    -op{INT} PAIR1 [PAIR2 ...]         : lib_id outward_pair_file (reads in 1 file, fasta or fastq)\n"
               << "    -OP{INT} FWD1 REV1 [FWD2 REV2 ...] : lib_id outward_pair_files (reads in 2 files, fasta or fastq)\n"
               << "    -p PAIR1 [PAIR2 ...]               : long-read file (PacBio, Nanopore) (reads in 1 file, fasta or fastq)\n"
-              << "    -x PAIR1 [PAIR2 ...]               : tagged_pair_files (10x Genomics) (reads in 1 file, fasta or fastq)\n"
-              << "    -X FWD1 REV1 [FWD2 REV2 ...]       : tagged_pair_files (10x Genomics) (reads in 2 files, fasta or fastq)\n"
+//              << "    -x PAIR1 [PAIR2 ...]               : tagged_pair_files (10x Genomics) (reads in 1 file, fasta or fastq)\n"
+//              << "    -X FWD1 REV1 [FWD2 REV2 ...]       : tagged_pair_files (10x Genomics) (reads in 2 files, fasta or fastq)\n"
               << "    -hic PAIR1 [PAIR2 ...]             : HiC_pair_files (reads in 1 file, fasta or fastq)\n" //added by ouchi
               << "    -HIC FWD1 REV1 [FWD2 REV2 ...]     : HiC_pair_files (reads in 2 files, fasta or fastq)\n" //added by ouchi
-              << "    -cgfa FILE                         : contig_GFA_file (GFA format; for Hifiasm result; only effective without -c, -b option)\n" //added by ouchi
-              << "    -cph FILE1 [FILE2 ...]             : contig_file (fasta format; for FALCON-Unzip result; only effective without -c, -b option)\n" //added by ouchi
+//              << "    -cgfa FILE                         : contig_GFA_file (GFA format; for Hifiasm result; only effective without -c, -b option)\n" //added by ouchi
               << "    -n{INT} INT                        : lib_id minimum_insert_size\n"
               << "    -a{INT} INT                        : lib_id average_insert_size\n"
               << "    -d{INT} INT                        : lib_id SD_insert_size\n"
@@ -135,21 +135,21 @@ void SolveDBG::usage(void) const
 //              << "    -S INT1 [INT2 ...]                 : mapping seed length for long reads (default " << optionMultiArgs.at("-S")[0] << ", only effective with -kmer_align option)\n"
               << "    -k INT                             : minimum number of links to phase variants (default " << optionSingleArgs.at("-k") << ")\n"
               << "    -l INT                             : minimum number of links to scaffold (default " << optionSingleArgs.at("-l") << ")\n"
-              << "    -u FLOAT                           : maximum difference for bubble crush (identity, default " << optionSingleArgs.at("-u") << ")\n"
+//              << "    -u FLOAT                           : maximum difference for bubble crush (identity, default " << optionSingleArgs.at("-u") << ")\n"
               << "    -t INT                             : number of threads (<= " << optionSingleArgs.at("-t") << ", default 1)\n"
-              << "    -unphase                           : not phase heterozygous regions and construct consensus scaffolds (default false)\n"
-              << "    -3D                                : chromosomal level scaffolding and phasing by HiC (default false; only effective with -hic, -HiC option)\n" //added by ouchi
-              << "    -simplify_junction                 : only simplify junction-contigs based on DBG-overlaps (default false)\n"
+//              << "    -unphase                           : not phase heterozygous regions and construct consensus scaffolds (default false)\n"
+//              << "    -3D                                : chromosomal level scaffolding and phasing by HiC (default true; only effective with -hic, -HiC option)\n" //added by ouchi
+//              << "    -simplify_junction                 : only simplify junction-contigs based on DBG-overlaps (default false)\n"
               << "    -mapper FILE                       : path of mapper executable file (default, minimap2; only effective with -p option)\n"
               << "    -minimap2_sensitive                : sensitive mode for minimap2 (default, off; only effective with -p option)\n"
               << "    -reduce_redundancy                 : reduce redundant sequences that exactly matche others (default, off)\n"
-              << "    -divide_only                       : only divide input sequences (default, off)\n"
-              << "    -unlink_list                       : reduce redundant sequences that exactly matche others (default, off)\n"
+//              << "    -divide_only                       : only divide input sequences (default, off)\n"
+//              << "    -unlink_list                       : reduce redundant sequences that exactly matche others (default, off)\n"
 //              << "    -minimap2                          : use minimap2 insterd of minimap (default) for alignment of long reads\n"
 //              << "    -minialign                         : use minialign insterd of minimap (default) for alignment of long reads\n"
 //              << "    -kmer_align                        : use built-in alignment based on k-mer match insterd of minimap (default) for long reads\n"
 //              << "    -fastg                             : output only fastg files of graphs for Bandage (default off)\n"
-              << "    -aggressive                        : aggressively extend scaffolds (default off)\n"
+//              << "    -aggressive                        : aggressively extend scaffolds (default off)\n"
               << "    -tmp DIR                           : directory for temporary files (default " << optionSingleArgs.at("-tmp") << ")\n\n\n"
 
               << "Input format:\n"
@@ -306,7 +306,8 @@ void SolveDBG::exec(void)
 
 //	pairedDBG.calcPercentilValue(95, numThread); //added by ouchi
 
-	pairedDBG.setHeteroCoverage(40); //added by ouchi for FALCON-Unzip Input
+    if (optionMultiArgs["-cph"].size() > 0) //added by ouchi
+		pairedDBG.setHeteroCoverage(40); //added by ouchi for FALCON-Unzip Input
 
 	pairedDBG.extractDBGBubbleInformation();
 	pairedDBG.clearEdges();
@@ -325,7 +326,8 @@ void SolveDBG::exec(void)
 	pairedDBG.setOppositeBubbleContigIDOverlapped(numThread);
 	pairedDBG.setOppositeBubbleContigIDByEndMatch();
 
-	pairedDBG.setOppositeBubbleContigIDByIndex(); //added by ouchi for FALCON-Unzip Input
+    if (optionMultiArgs["-cph"].size() > 0) //added by ouchi
+		pairedDBG.setOppositeBubbleContigIDByIndex(); //added by ouchi for FALCON-Unzip Input
 //	pairedDBG.setOppositeBubbleContigIDByOneEndMatch();
 
 //	pairedDBG.setForkJunctionContigIDOverlapped();
@@ -463,9 +465,9 @@ void SolveDBG::exec(void)
         pairedDBG.divideErroneousConsensusNode(numThread);
 
 		//pairedDBG.deleteErroneousConsensusEdgebyHiC(numThread);
-		std::ostringstream outStream4;
-		outStream4 << optionSingleArgs["-o"] << "outIteration_consensus_scaffolded_corrected.fastg";
-		pairedDBG.outputConsensusFastg(outStream4.str());
+//		std::ostringstream outStream4;
+//		outStream4 << optionSingleArgs["-o"] << "outIteration_consensus_scaffolded_corrected.fastg";
+//		pairedDBG.outputConsensusFastg(outStream4.str());
 
 
 
@@ -474,11 +476,11 @@ void SolveDBG::exec(void)
         if (libraryMT.size() > 0)
             pairedDBG.setTolerence(MAX_TOL_FACTOR * std::min(1.0 * libraryMT[libraryMT.size() - 1][0].getSDInsSize(), 0.1 * libraryMT[libraryMT.size() - 1][0].getAverageInsSize()));
         if (libraryMT.size() > 0 || longReadLibraryMT.size() > 0)
-            pairedDBG.HiC_Scaffolding(numThread, 0);
-        pairedDBG.HiC_Scaffolding(numThread, 1);
+            pairedDBG.HiC_Scaffolding(numThread, 0, optionSingleArgs["-o"]);
+        pairedDBG.HiC_Scaffolding(numThread, 1, optionSingleArgs["-o"]);
 
 		pairedDBG.setTolerenceFactor(MAX_TOL_FACTOR);
-		pairedDBG.phasing(numThread);
+		pairedDBG.phasing(numThread, optionSingleArgs["-o"]);
 		cerr << "solve_DBG completed!" << endl;
 		return;
 	}
@@ -1241,8 +1243,8 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
             // load contig file
             if (i == -4) {  //edited by ouchi (from i == -3)
                 //added by ouchi
-                if (optionSingleArgs["-cgfa"] != "" || optionMultiArgs["-cph"].size() > 0)
-                    continue;
+                //if (optionSingleArgs["-cgfa"] != "" || optionMultiArgs["-cph"].size() > 0)
+                //    continue;
                 //
 
                 for (unsigned i = 0; i < optionMultiArgs["-c"].size(); ++i)
@@ -1842,6 +1844,7 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 			oss << " " << *itr;
 	}
 	//oss << " | cut -f1-11 "; //deleted by ouchi
+	oss << " | sort -V -T " << optionSingleArgs["-tmp"]; //added by ouchi
 	oss << " >" << outFilename;
 
 	std::cerr << "Executing minimap2 ..." << std::endl;
@@ -2019,20 +2022,20 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
     if (this->contigReadLength == 0)
         this->contigReadLength = platanus::ConstParam::DEFAULT_CONTIG_READ_LEN;
     mapper->setContigMap(contig);
-    mapper->makeKmerTableContigMap();
+//    mapper->makeKmerTableContigMap();
 
     const bool tophitOption = optionBool["-minimap2_tophit"];
     optionBool["-minimap2_tophit"] = true;
 
-    readLibrary(mapper, contig, numThread);
-    mapLibrary(mapper, contig, numThread);
+//    readLibrary(mapper, contig, numThread);
+//    mapLibrary(mapper, contig, numThread);
 
     optionBool["-minimap2_tophit"] = tophitOption;
 
     pairedDBG.initScaffolding(contig.coverage, mapper->contigMap, averageCoverage, bubbleThreshold);
     pairedDBG.setContigName(contig.name);
     pairedDBG.setContigNameIndex(contig.nameIndex);
-    if (libraryMT.size() > 0) {
+/*    if (libraryMT.size() > 0) {
 		pairedDBG.setAllLibraryMT(&libraryMT);
 		pairedDBG.setTargetLibraryIndex(0);
 
@@ -2054,11 +2057,11 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
 		libraryMT[0][0].printInsertSizeFreq(outStream.str());
 		cerr << "[LIBRARY " << 1 << "]\nAVE_INS = " << libraryMT[0][0].getAverageInsSize()
 			 << ", SD_INS = " << libraryMT[0][0].getSDInsSize() << endl;
-    }
+    }*/
 
     pairedDBG.setContigMaxK(this->contigMaxK);
     pairedDBG.setMinOverlap(this->contigMaxK - 1);
-    pairedDBG.saveOverlap(mapper->contigMap, this->contigMaxK - 1, this->contigMaxK, numThread);
+/*    pairedDBG.saveOverlap(mapper->contigMap, this->contigMaxK - 1, this->contigMaxK, numThread);
     pairedDBG.classifyNode();
 
 	if (longReadLibraryMT.size() > 0) {
@@ -2072,7 +2075,7 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
 
 	if (HiCLibraryMT.size() > 0) {
 		pairedDBG.setHiCLibraryMT(&HiCLibraryMT);
-	}
+	}*/
 
     //selfAlignment
     string alignerOutFilename(optionSingleArgs["-o"]);
@@ -2083,8 +2086,13 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
 
     pairedDBG.outputConsensusFastg("mincinged.fastg");
 
-	cerr << "finish solveDBG" << endl;
-    exit(0);
+    optionMultiArgs["-c"] = {optionSingleArgs["-o"] + "_minced_nonBubble.fa"};
+    optionMultiArgs["-b"] = {optionSingleArgs["-o"] + "_minced_primaryBubble.fa", optionSingleArgs["-o"] + "_minced_secondaryBubble.fa"};
+
+    contig.clear();
+
+	cerr << "finish mince" << endl;
+    //exit(0);
 
 }
 //

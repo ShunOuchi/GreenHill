@@ -23,7 +23,7 @@ with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
 //////////////////////////////////////////////////////////////////////////////////////
 // static constant
 //////////////////////////////////////////////////////////////////////////////////////
-const std::string platanus::ConstParam::VERSION = "2.2.2";
+const std::string platanus::ConstParam::VERSION = "1.0.0";
 
 const unsigned long long platanus::ConstParam::MAX_READ_LEN = 500000;
 const unsigned platanus::ConstParam::SCAFFOLD_HASH_OVERLAP = 32;

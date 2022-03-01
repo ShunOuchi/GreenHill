@@ -114,7 +114,7 @@ PREFIX is specified by -o
 ## Example
 Below is showing examples how to run Platanus-3D using test dataset.
 The test dataset is the simulated diploid dataset of Caenorhabditis elegans chr1.
-###Example 1. I have Platanus-allee assembly (Haplotype-aware style input), PE, MP, LongRead, and Hi-C
+### Example 1. I have Platanus-allee assembly (Haplotype-aware style input), PE, MP, LongRead, and Hi-C
 ```
 platanus_3D \
 -c Platanus-allee_result/out_nonBubbleOther.fa \
@@ -125,14 +125,14 @@ platanus_3D \
 -p reads/longread.fq \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
-###Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input), LongRead, and Hi-C
+### Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input), LongRead, and Hi-C
 ```
 platanus_3D \
 -cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
 -p reads/longread.fq \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
-###Example 3. I have Canu assembly (Mixed-haplotype style input), LongRead, and Hi-C
+### Example 3. I have Canu assembly (Mixed-haplotype style input), LongRead, and Hi-C
 ```
 platanus_3D \
 -cph Canu_result/asm.contigs.fa \

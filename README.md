@@ -37,9 +37,7 @@ cp platanus_3D <installation_path>
 * Input assembly (required)
     * Haplotype-aware style input (such as [Platanus-allee](http://platanus.bio.titech.ac.jp/platanus2)):<br>
       primaryBubble.fa secondaryBubble.fa nonBubble.fa
-    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip)):<br>
-      contigs.fa
-    * Mixed-haplotype style input (such as [Canu](https://github.com/marbl/canu)):<br>
+    * Pseudo-haplotype style input (such as [FALCON-Unzip](https://github.com/PacificBiosciences/FALCON_unzip)) or Mixed-haplotype style input (such as [Canu](https://github.com/marbl/canu)):<br>
       contigs.fa
 * Input reads
     * Hi-C reads: HIC_1.fq HIC_2.fq (required)
@@ -119,24 +117,24 @@ The test dataset is the simulated diploid dataset of Caenorhabditis elegans chr1
 platanus_3D \
 -c Platanus-allee_result/out_nonBubbleOther.fa \
 -b Platanus-allee_result/out_primaryBubble.fa Platanus-allee_result/out_secondaryBubble.fa \
--IP1 reads/PE_1.fq reads/PE_2.fq \
--OP2 reads/MP5k_1.fq reads/MP5k_2.fq \
--OP3 reads/MP9k_1.fq reads/MP9k_2.fq \
--p reads/longread.fq \
+-IP1 reads/PE_*.fq.gz \
+-OP2 reads/MP5k_*.fq.gz \
+-OP3 reads/MP9k_*.fq.gz \
+-p reads/longread.fq.gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
 ### Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)
 ```
 platanus_3D \
 -cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
--p reads/longread.fq \
+-p reads/longread.fq,gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
 ### Example 3. I have Canu assembly (Mixed-haplotype style input)
 ```
 platanus_3D \
 -cph Canu_result/asm.contigs.fa \
--p reads/longread.fq \
+-p reads/longread.fq.gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
 

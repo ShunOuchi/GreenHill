@@ -104,6 +104,7 @@ platanus_3D [OPTIONS] 2>log
 
 ### Outputs:
    PREFIX_ConsensusOutput.fa
+
    PREFIX_afterPhase.fa
 
 PREFIX is specified by -o

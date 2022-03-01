@@ -73,6 +73,37 @@ platanus_3D \
 ### Final output
     out_afterPhase.fa (phased diploid scaffolds)
 
+
+---
+## Example
+Below is showing examples how to run Platanus-3D using test dataset.
+The test dataset is the simulated diploid dataset of _Caenorhabditis elegans_ chr1.
+### Example 1. I have Platanus-allee assembly (Haplotype-aware style input)
+```
+platanus_3D \
+-c Platanus-allee_result/out_nonBubbleOther.fa \
+-b Platanus-allee_result/out_primaryBubble.fa Platanus-allee_result/out_secondaryBubble.fa \
+-IP1 reads/PE_*.fq.gz \
+-OP2 reads/MP5k_*.fq.gz \
+-OP3 reads/MP9k_*.fq.gz \
+-p reads/longread.fq.gz \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
+### Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)
+```
+platanus_3D \
+-cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
+-p reads/longread.fq,gz \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
+### Example 3. I have Canu assembly (Mixed-haplotype style input)
+```
+platanus_3D \
+-cph Canu_result/asm.contigs.fa \
+-p reads/longread.fq.gz \
+-HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
+```
+
 ---
 ## Usage
 ### Command
@@ -109,35 +140,6 @@ platanus_3D [OPTIONS] 2>log
 
 PREFIX is specified by -o
 
----
-## Example
-Below is showing examples how to run Platanus-3D using test dataset.
-The test dataset is the simulated diploid dataset of _Caenorhabditis elegans_ chr1.
-### Example 1. I have Platanus-allee assembly (Haplotype-aware style input)
-```
-platanus_3D \
--c Platanus-allee_result/out_nonBubbleOther.fa \
--b Platanus-allee_result/out_primaryBubble.fa Platanus-allee_result/out_secondaryBubble.fa \
--IP1 reads/PE_*.fq.gz \
--OP2 reads/MP5k_*.fq.gz \
--OP3 reads/MP9k_*.fq.gz \
--p reads/longread.fq.gz \
--HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
-```
-### Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)
-```
-platanus_3D \
--cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
--p reads/longread.fq,gz \
--HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
-```
-### Example 3. I have Canu assembly (Mixed-haplotype style input)
-```
-platanus_3D \
--cph Canu_result/asm.contigs.fa \
--p reads/longread.fq.gz \
--HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
-```
 
 ---
 ## Notes

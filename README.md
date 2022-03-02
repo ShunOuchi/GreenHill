@@ -1,8 +1,8 @@
-# Platanus-3D README.md
+# GreenHill README.md
 
 ## Description
-Platanus-3D is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
-Platanus-3D generates chromosome-level haplotypes by scaffolding and phasing
+GreenHill is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
+GreenHill generates chromosome-level haplotypes by scaffolding and phasing
 the input contigs using a combination of information from Hi-C and other reads (PE, MP, LongRead).
 
 ## Version
@@ -25,10 +25,10 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 
 ## Installation
 ```sh
-git clone https://github.com/ShunOuchi/Platanus-3D.git
+git clone https://github.com/ShunOuchi/GreenHill.git
 cd src
 make
-cp platanus_3D <installation_path>
+cp greenhill <installation_path>
 ```
 
 
@@ -49,7 +49,7 @@ cp platanus_3D <installation_path>
 
 * for Haplotype-aware style input
 ```
-platanus_3D \
+greenhill \
 -c nonBubble.fa \
 -b primaryBubble.fa secondaryBubble.fa \
 -IP1 PE_1.fq PE_2.fq \
@@ -61,7 +61,7 @@ platanus_3D \
 
 * for Pseudo-haplotype or Mixed-haplotype style input
 ```
-platanus_3D \
+greenhill \
 -cph contigs.fa \
 -IP1 PE_1.fq PE_2.fq \
 -OP2 MP_1.fq MP_2.fq \
@@ -76,11 +76,11 @@ platanus_3D \
 
 ---
 ## Example
-Below is showing examples how to run Platanus-3D using test dataset.
+Below is showing examples how to run GreenHill using test dataset.
 The test dataset is the simulated diploid dataset of _Caenorhabditis elegans_ chr1.
 ### Example 1. I have Platanus-allee assembly (Haplotype-aware style input)
 ```
-platanus_3D \
+greenhill \
 -c Platanus-allee_result/out_nonBubbleOther.fa \
 -b Platanus-allee_result/out_primaryBubble.fa Platanus-allee_result/out_secondaryBubble.fa \
 -IP1 reads/PE_*.fq.gz \
@@ -91,14 +91,14 @@ platanus_3D \
 ```
 ### Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)
 ```
-platanus_3D \
+greenhill \
 -cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
 -p reads/longread.fq,gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
 ### Example 3. I have Canu assembly (Mixed-haplotype style input)
 ```
-platanus_3D \
+greenhill \
 -cph Canu_result/asm.contigs.fa \
 -p reads/longread.fq.gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
@@ -108,7 +108,7 @@ platanus_3D \
 ## Usage
 ### Command
 ```sh
-platanus_3D [OPTIONS] 2>log
+greenhill [OPTIONS] 2>log
 ```
 ### Options
     -o STR                             : prefix of output file and directory (do not use "/", default out, length <= 200)

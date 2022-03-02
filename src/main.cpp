@@ -1,20 +1,20 @@
 /*
 Copyright (C) 2022 Itoh Laboratory, Tokyo Institute of Technology
 
-This file is part of Platanus-3D.
+This file is part of GreenHill.
 
-Platanus-3D is free software; you can redistribute it and/or modify
+GreenHill is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Platanus-3D is distributed in the hope that it will be useful,
+GreenHill is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with Platanus-3D; if not, write to the Free Software Foundation, Inc.,
+with GreenHill; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
@@ -38,7 +38,7 @@ using std::endl;
 //////////////////////////////////////////////////////////////////////////////////////
 void Usage(void)
 {
-    cerr << "Usage: platanus_3d [options]" << endl;
+    cerr << "Usage: greenhill [options]" << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ void Usage(void)
 //////////////////////////////////////////////////////////////////////////////////////
 void ShowVersion(void)
 {
-    cerr << "platanus_3D version: " << platanus::ConstParam::VERSION << endl;
+    cerr << "greenhill version: " << platanus::ConstParam::VERSION << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

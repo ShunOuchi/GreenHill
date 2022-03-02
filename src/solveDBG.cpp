@@ -2084,7 +2084,7 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
 
     pairedDBG.mincingBubble(optionSingleArgs["-o"], numThread);
 
-    pairedDBG.outputConsensusFastg("mincinged.fastg");
+    //pairedDBG.outputConsensusFastg("mincinged.fastg");
 
     optionMultiArgs["-c"] = {optionSingleArgs["-o"] + "_minced_nonBubble.fa"};
     optionMultiArgs["-b"] = {optionSingleArgs["-o"] + "_minced_primaryBubble.fa", optionSingleArgs["-o"] + "_minced_secondaryBubble.fa"};

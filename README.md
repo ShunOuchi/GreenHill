@@ -93,7 +93,7 @@ greenhill \
 ```
 greenhill \
 -cph FALCON-Unzip_result/cns_p_ctg.fa FALCON-Unzip_result/cns_h_ctg.fa \
--p reads/longread.fq,gz \
+-p reads/longread.fq.gz \
 -HIC reads/HIC_1.fq.gz reads/HIC_2.fq.gz
 ```
 ### Example 3. I have Canu assembly (Mixed-haplotype style input)

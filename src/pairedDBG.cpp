@@ -11361,6 +11361,7 @@ void PairedDBG::consensusScaffolding(void)
             candidateIterator = candidate.erase(candidateIterator + minCandidateID);
         }
 
+        std::sort(include.begin(), include.end());
         long includeSize = include.size();
         long minStart = include[0].start;
         for (char h = 0; h < 2; ++h) {
@@ -12152,7 +12153,13 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
 			numLongReadLink[index] += 1;
         }
     }
-
+	
+    for (long i = 0; i < 4; ++i) {
+        if (insDistribution[i].size() != 0) {
+            std::sort(insDistribution[i].begin(), insDistribution[i].end(), [](const std::pair<long, long> &left, const std::pair<long, long> &right){return left.first < right.first;});
+        }
+    }
+	
     //MPLinks > 0 (correct sign and insertLength)
     if (gapDistribution[0].size() > 0) {
         long numLink = gapDistribution[0].size();

@@ -2610,7 +2610,7 @@ long PairedDBG::solveSimpleCrossStructure(const double linkRateThreshold, const 
 	long numSolvedCross = remakeGraphAccordingToPathPair(mergedPathBuffer);
 
 	//added by ouchi for test
-	std::cerr<< "numCross:" << numCross <<"\tnumSolvedbyMP:" << numSolvedCrossbyMP << "\tnumMissedbyHiC:" << numMissedbyHiC << "\tnumCorrectbyHiC:" << numCorrectbyHiC << "\tnumSolvedbyHiC:" << numSolvedCrossbyHiC << std::endl;
+	//std::cerr<< "numCross:" << numCross <<"\tnumSolvedbyMP:" << numSolvedCrossbyMP << "\tnumMissedbyHiC:" << numMissedbyHiC << "\tnumCorrectbyHiC:" << numCorrectbyHiC << "\tnumSolvedbyHiC:" << numSolvedCrossbyHiC << std::endl;
 	/*std::ofstream ofs;
 	static int iteration;
 	ofs.open("solveCross" + std::to_string(iteration++));
@@ -2880,7 +2880,7 @@ if (tagFlag) {
 	long numSolvedCross = remakeGraphAccordingToGappedPathPair(mergedPathBuffer);
 
 	//added by ouchi for test
-	std::cerr<< "numCross:" << numCross <<"\tnumSolvedbyMP:" << numSolvedCrossbyMP << "\tnumMissedbyHiC:" << numMissedbyHiC << "\tnumCorrectbyHiC:" << numCorrectbyHiC << "\tnumSolvedbyHiC:" << numSolvedCrossbyHiC << std::endl;
+	//std::cerr<< "numCross:" << numCross <<"\tnumSolvedbyMP:" << numSolvedCrossbyMP << "\tnumMissedbyHiC:" << numMissedbyHiC << "\tnumCorrectbyHiC:" << numCorrectbyHiC << "\tnumSolvedbyHiC:" << numSolvedCrossbyHiC << std::endl;
 	/*std::ofstream ofs;
 	static int iteration;
 	ofs.open("solveGappedCross" + std::to_string(iteration++));
@@ -6090,7 +6090,6 @@ long PairedDBG::deleteErroneousEdgebyHiC(const long numThread)
             if (this->checkHiCLinkBetweenNodePair(nodeID+1, node[nodeID].edge[edgeID].direction, node[nodeID].edge[edgeID].end)) continue;
             //#pragma omp critical (delete_edge)
             {
-//				std::cerr << "nodeID:" << nodeID << "\tnodeID2:" << node[nodeID].edge[edgeID].end << std::endl;
                 ids.push_back(nodeID + 1);
                 ids.push_back(node[nodeID].edge[edgeID].end);
             }
@@ -8661,7 +8660,6 @@ void PairedDBG::detectBreakpointBasedOnCoverage(const vector<unsigned>& physical
 
 long PairedDBG::detectBreakpointBasedOnCoverage2(const vector<ConsensusPart> &scaffold, long start, long end)
 {
-	std::cerr << "detectBreakpointBasedOnCoverage2:" << start << "\t" << end << std::endl;
     vector<long> physicalCoverage(end-start, 0);
     for (char h = 0; h < 2; ++h) {
         for (long index = 0; index < scaffold.size(); ++index) {
@@ -9093,7 +9091,6 @@ void PairedDBG::calcIdealContact(const long numThread)
     idealcontact.resize(contact.size());
     for (unsigned int i = 0; i < contact.size(); ++i) {
         idealcontact[i] = static_cast<double>(contact[i]) / num[i];
-		std::cerr << idealcontact[i] << std::endl; //added by ouchi for test
     }
 }
 //
@@ -9126,15 +9123,6 @@ void PairedDBG::makeContactmap(const long nodeID, vector<vector<int> > &contactm
                 ++contactmap[(hiclink.offset1-lower)/binsize][(hiclink.offset2-lower)/binsize];
         }
     }
-
-	std::cerr << "contactmap " << nodeID << std::endl;
-	for (long i = 0; i < contactmap.size(); ++i) {
-		for (long j = 0; j < contactmap[i].size(); ++j) {
-			std::cerr << contactmap[i][j] << "\t";
-		}
-		std::cerr << std::endl;
-	}
-
 }
 //
 
@@ -9438,7 +9426,6 @@ void PairedDBG::detectPeak(const vector<T> &v, long delta, long bin, long maxh, 
 //////////////////////////////////////////////////////////////////////////////////////
 void PairedDBG::detectContactChange(const vector<vector<int> > &contactmap, const long start, const long end, vector<long> &locate)
 {
-	std::cerr << "detectContactChange: " << start << "\t" << end << std::endl;
     int L = HiC_CONTACTMAP_L_THRESHOLD;
     long b = std::min(L, static_cast<int>(idealcontact.size() - 1)); //correction_L
     double peakk = 10000; // = percentilvalue;
@@ -9495,9 +9482,7 @@ void PairedDBG::detectContactChange(const vector<vector<int> > &contactmap, cons
         if (od > maxod) {
             maxod = od; maxj = j;
         }
-		std::cerr << "j:" << j << "\tod:" << od << std::endl;
     }
-	std::cerr << "maxj:" << maxj << "\tmaxod:" << maxod << std::endl;
 
     if (maxj == -1) return;
 
@@ -9512,7 +9497,6 @@ void PairedDBG::detectContactChange(const vector<vector<int> > &contactmap, cons
         if (i >= 1) n1 = peaks[i-1];
         if (i+1 < peaks.size()) n3 = peaks[i+1];
         calcSeparation(contactmap, n1 ,n2 ,n3, result);
-		std::cerr << "1\t" <<n1 << "\t" << n2 << "\t" << n3 << "\t" << result[0]/result[1] << "\t" << result[3]/result[4] << "\t" << result[2] << "\t" << result[5] << std::endl;
         if (result[0]/result[1] + result[3]/result[4] < HiC_CONTACTMAP_S_THRESHOLD || result[2] + result [5] < HiC_CONTACTMAP_T_THRESHOLD) {
             peaks.erase(peaks.begin()+i);
             continue;
@@ -9536,7 +9520,6 @@ void PairedDBG::detectContactChange(const vector<vector<int> > &contactmap, cons
         if (i >= 1) n1 = locate[i-1];
         if (i+1 < locate.size()) n3 = locate[i+1];
         calcSeparation(contactmap, n1, n2, n3, result);
-		std::cerr << "2\t" << n1 << "\t" << n2 << "\t" << n3 << "\t" << result[0]/result[1] << "\t" << result[3]/result[4] << "\t" << result[2] << "\t" << result[5] << std::endl;
         if (result[0]/result[1] + result[3]/result[4] < HiC_CONTACTMAP_S_THRESHOLD || result[2] + result[5] < HiC_CONTACTMAP_T_THRESHOLD) {
             locate.erase(locate.begin()+i);
             continue;
@@ -9587,9 +9570,7 @@ void PairedDBG::calcPercentilValue(const long percent, const long numThread)
 	cerr << "finish" << endl;
 
     vector<int> mergedcontact;
-	cerr << "merge" << endl;
     mergeAndClearMultiThreadedVector(contact, mergedcontact);
-	cerr << "sort" << endl;
     std::partial_sort(mergedcontact.begin(), mergedcontact.begin() + mergedcontact.size() * percent / 100 + 1, mergedcontact.end());
     //percentilvalue = mergedcontact[mergedcontact.size() * percent / 100];
     //cerr << percent << "PERCENTILVALUE=" << percentilvalue << endl;
@@ -10541,24 +10522,6 @@ void PairedDBG::remakeConsensus(const long numNewConsensusNode, const long newNo
             else
                 nodePositionInConsensus[tmp].emplace_back(1, platanus::Position(j, -(i + 1)));
         }
-
-		std::cerr << i << std::endl;
-		for (long j = 0; j < consensusnode[i].numNode[0]; ++j) {
-			std::cerr << "id:" << consensusnode[i].node[0][j].id << ", s:" << consensusnode[i].node[0][j].start << ", e:" << consensusnode[i].node[0][j].end << ", ";
-			if (j > 0) {
-				if ((consensusnode[i].node[0][j-1].start - consensusnode[i].node[0][j].end - (consensusnode[i].node[0][j].start - consensusnode[i].node[0][j-1].end)) > 0)
-					std::cerr << "ERROR, ";
-			}
-		}
-		std::cerr << std::endl;
-		for (long j = 0; j < consensusnode[i].numNode[1]; ++j) {
-			std::cerr << "id:" << consensusnode[i].node[1][j].id << ", s:" << consensusnode[i].node[1][j].start << ", e:" << consensusnode[i].node[1][j].end << ", ";
-			if (j > 0) {
-				if ((consensusnode[i].node[1][j-1].start - consensusnode[i].node[1][j].end - (consensusnode[i].node[1][j].start - consensusnode[i].node[1][j-1].end)) > 0)
-					std::cerr << "ERROR, ";
-			}
-		}
-		std::cerr << std::endl;
     }
 
 }
@@ -11304,7 +11267,6 @@ void PairedDBG::consensusScaffolding(void)
     FILE *scaffoldFP = platanus::makeTemporaryFile();
 
     for (long i = 0; i < numConsensusNode; ++i) {
-//		cerr << "consensusIndex: " << i << endl;
         if (consensusnode[i].state & SC_INC) continue;
         include.clear();
         candidate.clear();
@@ -11351,8 +11313,6 @@ void PairedDBG::consensusScaffolding(void)
                     minCandidateID = j;
                 }
             }
-
-//		cerr << "minCandidateID: " << candidate[minCandidateID].id << endl;
 
             long tmpConsensusIndex = abs(candidate[minCandidateID].id) - 1;
 
@@ -11401,13 +11361,6 @@ void PairedDBG::consensusScaffolding(void)
             candidateIterator = candidate.erase(candidateIterator + minCandidateID);
         }
 
-//		cerr << "sort include" << endl;
-        std::sort(include.begin(), include.end());
-		/*std::cerr << "include:" << std::endl;
-		for (long j = 0; j < include.size(); ++ j) {
-			std::cerr << "id:" << include[j].id << ", s:" << include[j].start << ", e:" << include[j].end << ", ";
-		}
-		std::cerr << std::endl;*/
         long includeSize = include.size();
         long minStart = include[0].start;
         for (char h = 0; h < 2; ++h) {
@@ -11436,8 +11389,6 @@ void PairedDBG::consensusScaffolding(void)
     }
     include.clear();
     candidate.clear();
-
-		cerr << "numNewConsensusNode: "<< numNewConsensusNode << endl;
 
     writeSingletonConsensusNode(numNewConsensusNode, newNodePoolSize, scaffoldFP);
     remakeConsensus(numNewConsensusNode, newNodePoolSize, scaffoldFP);
@@ -11576,16 +11527,6 @@ void PairedDBG::divideErroneousConsensusNode(const long numThread)
             continue;
         vector<long> breakpoint;
         detectBreakpointBasedOnConsensusCoverage(i, physicalCoverage[i], diffCoverage[i], 1, breakpoint);
-		std::cerr << "locate:";
-		for (long j = 0; j < locate.size(); ++j) {
-			std::cerr << locate[j] << ",";
-		}
-		std::cerr << std::endl;
-		std::cerr << "breakpoint:";
-		for (long j = 0; j < breakpoint.size(); ++j) {
-			std::cerr << breakpoint[j] << ",";
-		}
-		std::cerr << std::endl;
         for (long j = locate.size() - 1; j >= 0; --j) {
             long k = breakpoint.size()-1;
             for (; k > 0; --k) {
@@ -11593,7 +11534,6 @@ void PairedDBG::divideErroneousConsensusNode(const long numThread)
                     break;
             }
             if (k > 0) {
-                std::cerr << "divideConsensusNode:" << i + 1 << "\tat:" << breakpoint[k] << std::endl;
                 divideConsensusNode(i+1, breakpoint[k], numThread, 0);
                 ++numDivided;
             }
@@ -11657,13 +11597,6 @@ long PairedDBG::makeConsensusContactmap(const long consensusID, vector<vector<in
         }
     }
 
-	std::cerr << "contactmap:" << consensusID << std::endl;
-	for (long i = 0; i < contactmap.size(); ++i) {
-		for (long j = 0; j < contactmap[i].size(); ++j) {
-			std::cerr << contactmap[i][j] << "\t";
-		}
-		std::cerr << std::endl;
-	}
     return 0;
 }
 //
@@ -11814,22 +11747,6 @@ long PairedDBG::makeConsensusContactmap(const long consensusID1, const char dire
 
     }
 
-	std::cerr << "contactmap" << std::endl;
-	std::cerr << "consensusID1:" << consensusID1 << "\tdirection:" << direction << "\tconsensusID2:" << consensusID2 << std::endl;
-	for (long i = 0; i < contactmap.size(); ++i) {
-		if (i == boundary) {
-			for (long j = 0; j < contactmap[i].size(); ++j) {
-				std::cerr << "_\t";
-			}
-			std::cerr << std::endl;
-		}
-		for (long j = 0; j < contactmap[i].size(); ++j) {
-			if (j == boundary) std::cerr << "|\t";
-			std::cerr << contactmap[i][j] << "\t";
-		}
-		std::cerr << std::endl;
-	}
-
     return boundary;
 }
 //
@@ -11844,11 +11761,8 @@ bool PairedDBG::checkHiCLinkBetweenConsensusPair(const long consensusID1, const 
     vector<long> gapRegion;
     deleteGapRegionFromContactmap(contactmap, boundary, gapRegion);
 	if (contactmap.size() == boundary || boundary == 0) return 1; //added by ouchi (20220216)
-	std::cerr << contactmap.size() << "\t" << boundary << std::endl;
     std::array<double, 6> result;
     calcSeparation(contactmap, 0, boundary, contactmap.size(), result, true);
-	std::cerr << "result: " << result[0]/result[1] << "\t" << result[3]/result[4] << "\t" << result[2] << "\t" << result[5] << std::endl;
-	std::cerr << (result[0]/result[1] + result[3]/result[4] < HiC_CONTACTMAP_S_THRESHOLD || result[2] + result[5] < HiC_CONTACTMAP_T_THRESHOLD) << std::endl;
     return (result[0]/result[1] + result[3]/result[4] < HiC_CONTACTMAP_S_THRESHOLD || result[2] + result[5] < HiC_CONTACTMAP_T_THRESHOLD);
 }
 //
@@ -11879,7 +11793,6 @@ double PairedDBG::calcConsensusCoverage(const ConsensusNode& consensusnode)
 //added by ouchi
 void PairedDBG::checkConsensusPath(long start, long end, long maxDistance, long &numLink, long &gap)
 {
-//	std::cerr << "checkConsensusPath " << start << " to " << end << std::endl;
     vector<long> candiate;
     vector<long> gaps;
     ConsensusNode &tmpConsensus = consensusnode[id2Index(start)];
@@ -11889,18 +11802,15 @@ void PairedDBG::checkConsensusPath(long start, long end, long maxDistance, long 
             if (tmpEdge.direction * tmpEdge.end == end) {
                 candiate.push_back(std::max(tmpEdge.numLink[0], tmpEdge.numLink[1]));
                 gaps.push_back(tmpEdge.length);
-//				std::cerr << "candiate.push_back " << std::max(tmpEdge.numLink[0], tmpEdge.numLink[1]) << std::endl;
             } else {
                 if (maxDistance > 1) {
                     if (consensusnode[id2Index(tmpEdge.end)].length < this->cutoffLength) {
                         long tmpNumLink = 0;
                         long tmpGap = 0;
                         checkConsensusPath(tmpEdge.direction * tmpEdge.end, end, maxDistance-1, tmpNumLink, tmpGap);
-//						std::cerr << "tmpNumLink: " << tmpNumLink << std::endl;
                         if (tmpNumLink > 0) {
                             candiate.push_back(std::min(std::max(tmpEdge.numLink[0], tmpEdge.numLink[1]), tmpNumLink));
                             gaps.push_back(tmpGap + tmpEdge.length + consensusnode[id2Index(tmpEdge.end)].length);
-//							std::cerr << "candiate.push_back2 " << std::min(std::max(tmpEdge.numLink[0], tmpEdge.numLink[1]), tmpNumLink) << std::endl;
                         }
                     }
                 }
@@ -11992,8 +11902,6 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
 								# pragma omp critical (push)
 								{
                                     Links.push_back(std::array<long, 6>{sign1, offset1, sign2, offset2, libraryID, 0});
-									if (offset1 < 0 || offset1 > length1 || offset2 < 0 || offset2 > length2)
-										std::cerr << "error:" << offset1 << "\t" << length1 << "\t" << offset2 << "\t" << length2 << "\t" << tmpConsensus.node[(h+scaffold1[index1].h)%2][i].id << "\t" << mplink.end << std::endl;
 								}
                             }
                             index2 = 0;
@@ -12069,8 +11977,6 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
                             # pragma omp critical (push)
                             {
                                 Links.push_back(std::array<long, 6>{sign1, offset1, sign2, offset2, numPairedEndLibrary, longlink.gap});
-								if (offset1 < 0 || offset1 > length1 || offset2 < 0 || offset2 > length2)
-									cerr << "error:" << offset1 << "\t" << length1 << "\t" << offset2 << "\t" << length2 << "\t" << tmpConsensus.node[(h+scaffold1[index1].h)%2][i].id << "\t" << longlink.end << endl;
                             }
                         }
                         index2 = 0;
@@ -12247,40 +12153,6 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
         }
     }
 
-    for (long i = 0; i < 4; ++i) {
-        std::cerr << "orient:";
-        if (i < 2)
-            std::cerr << "+\t";
-        else
-            std::cerr << "-\t";
-        if (i%2 == 1)
-            std::cerr << "+\t";
-        else
-            std::cerr << "-\t";
-        std::cerr << "numLink:" << gapDistribution[i].size();
-        if (gapDistribution[i].size() != 0)
-            std::cerr << "\tgap:" << std::accumulate(gapDistribution[i].begin(), gapDistribution[i].end(), 0L) / static_cast<long>(gapDistribution[i].size());
-        std::cerr << std::endl;
-        //for (long j = 0; j < gapDistribution[i].size(); ++j) {
-        //    std::cerr << gapDistribution[i][j] << ", ";
-        //}
-        //if (gapDistribution[i].size() > 0)
-        //    std::cerr << std::endl;
-        std::cerr << "numLink(ignore insertLength):" << insDistribution[i].size();
-        if (insDistribution[i].size() != 0) {
-            std::sort(insDistribution[i].begin(), insDistribution[i].end(), [](const std::pair<long, long> &left, const std::pair<long, long> &right){return left.first < right.first;});
-            long tmp = insDistribution[i].size() * 0.1;
-            std::cerr << "\t10%trim Average InsSize:" << std::accumulate(insDistribution[i].begin()+tmp, insDistribution[i].end()-tmp, 0L, [](const long sum, const std::pair<long, long> val){return sum + val.first;}) / (static_cast<long>(insDistribution[i].size()) - 2*tmp);
-        }
-        std::cerr << std::endl;
-		cerr << "numLongLink:" << numLongReadLink[i] << endl;
-        //for (long j = 0; j < insDistribution[i].size(); ++j) {
-        //    std::cerr << insDistribution[i][j].first << ", ";
-        //}
-        //if (insDistribution[i].size() > 0)
-        //    std::cerr << std::endl;
-    }
-
     //MPLinks > 0 (correct sign and insertLength)
     if (gapDistribution[0].size() > 0) {
         long numLink = gapDistribution[0].size();
@@ -12301,7 +12173,6 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
     }
     if (maxLink > 0) {
         long gap = std::accumulate(gapDistribution[maxi].begin(), gapDistribution[maxi].end(), 0L) / static_cast<long>(gapDistribution[maxi].size());
-        std::cerr << "orient:" << maxi << std::endl;
         result[0] = 1;
         result[1] = maxLink;
         result[2] = gap;
@@ -12521,20 +12392,6 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
         end = std::min(std::max(0L,end), length1-1);
         start2 = std::min(std::max(0L,start2), length2-1);
         end2 = std::min(std::max(0L,end2), length2-1);
-		#pragma omp critical
-		{
-            std::cerr << "misCheck:" << h << std::endl;
-            std::cerr << "maxLink:" << maxLink << "\tinsert:" << maxInsert << "\tbreakpoint:" << length1-1 - start << "-" << length1-1 - end << "\tbreakpoint2:" << start2 << "-" << end2 << std::endl;
-            /*if (MaxLink < maxLink) {
-                MaxLink = maxLink;
-                Maxh = h;
-                MaxInsert = maxInsert;
-                MaxStart = start;
-                MaxEnd = end;
-                MaxStart2 = start2;
-                MaxEnd2 = end2;
-            }*/
-		}
         MaxReports[h][0] = h;
         MaxReports[h][1] = maxLink;
         MaxReports[h][2] = maxInsert;
@@ -12606,7 +12463,7 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
                     }
                 }
             }
-            //切断処理
+            // Cut process
             std::cerr << "cut:" << length1-1 - break1 << "," << break2 << "\tnumLink:" << MaxLink << "\tbeforeLink:" << beforeLink << "\tgap:" << -(MaxInsert - (length1-1-break1) - break2) <<std::endl;
             if (beforeLink * 2 < MaxLink) {
                 if (length1-1 - break1 < EDGE_LENGTH && break2 < EDGE_LENGTH) {
@@ -12670,8 +12527,7 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
             } else {
                 tmpInsert -= length1-1 - break1;
             }
-            //逆位修正処理
-            std::cerr << "inversion:" << length1-1 - break1 << ", " << break2 << "\tnumLink:" << MaxLink << "\tbeforeLink:" << beforeLink << "\tafterLink:" << afterLink << "\tgap:" << -tmpInsert << std::endl;
+            // Inversion correction
             if (afterLink > beforeLink * 2) {
                 if (length1-1 - break1 < EDGE_LENGTH && break2 < EDGE_LENGTH) {
                     result[0] = 2 + Maxh;
@@ -12737,8 +12593,7 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
                 }
             }
         }
-        //切断処理
-        std::cerr << "cut:" << breakpoint[maxi] << "," << breakpoint2[maxj] << "\tnumLink:" << maxLink << "\tbeforeLink:" << beforeLink << std::endl;
+        // Cut prosses
         if (maxLink > beforeLink * 2) {
             if (breakpoint[maxi] < EDGE_LENGTH && breakpoint2[maxj] < EDGE_LENGTH) {
                 result[0] = 2;
@@ -12875,8 +12730,7 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
                 }
             }
         }
-        //逆位修正処理
-        std::cerr << "inversion:" << breakpoint[maxi] << "," << breakpoint[maxj] << "\tnumLink:" << maxLink << "\tbeforeLink:" << beforeLink << "\tafterLink:" << afterLink << std::endl;
+        // Inversion correction
         if (afterLink > beforeLink * 2) {
             if (breakpoint[maxi] < EDGE_LENGTH && breakpoint2[maxj] < EDGE_LENGTH) {
                 if (result[1] < maxLink) {
@@ -12908,8 +12762,7 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
         }
     }
     if (maxLink > 20) {
-        //重複処理
-        std::cerr << "duplication: " << maxOverlap << "\tnumLink:" << maxLink << std::endl;
+        // Duplication process
         if (maxOverlap < EDGE_LENGTH) {
             if (result[1] < maxLink) {
                 result[0] = 4;
@@ -13149,7 +13002,6 @@ void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag, const strin
 		}*/
 
         vector<HiCConsensusEdge> es;
-		std::cerr << "L: " << L << std::endl;
 
 		long numChecked = 0;
 		long numContactmapChecked = 0;
@@ -13193,33 +13045,6 @@ void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag, const strin
                 if (e.numLink < 100) break;
             }
 
-            std::cerr << "Score:" << e.numLink << "\n";
-            for (long i  = 0; i < scaffolda.size(); ++i) {
-                std::cerr << abs(scaffolda[i].id);
-                if (scaffolda[i].id > 0)
-                    std::cerr << "+";
-                else
-                    std::cerr << "-";
-                std::cerr << abs(scaffolda[i].id);
-                if (scaffolda[i].id > 0)
-                    std::cerr << "-";
-                else
-                    std::cerr << "+";
-            }
-            std::cerr << "\t";
-            for (long i  = 0; i < scaffoldb.size(); ++i) {
-                std::cerr << abs(scaffoldb[i].id);
-                if (scaffoldb[i].id > 0)
-                    std::cerr << "+";
-                else
-                    std::cerr << "-";
-                std::cerr << abs(scaffoldb[i].id);
-                if (scaffoldb[i].id > 0)
-                    std::cerr << "-";
-                else
-                    std::cerr << "+";
-            }
-            std::cerr << std::endl;
 
 			//
 			++numChecked;
@@ -13347,7 +13172,6 @@ void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag, const strin
                     }
                 }
             }
-            std::cerr << "MatePairLink: " << numLink << "\tgap:" << gap << std::endl;
 
 
 
@@ -13492,13 +13316,6 @@ void PairedDBG::HiC_Scaffolding(const long numThread, long lastFlag, const strin
             uniteHiCNode(consensusID1, consensusID2, e.h, gap, numHiCNode, hicnode, consensusPositionInHiCNode);
 
         }
-
-		//
-		std::cerr << "Checked: " << numChecked << std::endl;
-		std::cerr << "ContactmapChecked: " << numContactmapChecked << "\tTrue: " << numContactmapTrue << "\tFalse: " << numContactmapFalse << std::endl;
-		std::cerr << "MatePair True: " << numMatePairTrue << "\tFalse: " << numMatePairFalse << std::endl;
-		std::cerr << "Contactmap&MatePair True: " << numContactmapAndMateTrue << "\tFalse: " << numContactmapAndMateFalse << std::endl;
-		//
 
         //std::cerr << "Output HiCNode" << std::endl;
         //std::string outputName = "_HiCNode_result_" + std::to_string(L) + ".fa";
@@ -14205,13 +14022,8 @@ void PairedDBG::uniteHiCNode(long id1, long id2, char h, long gap, long &numHiCN
     getConsensusPart(id1, 0, 1, scaffolda, numHiCNode, hicnode, consensusPositionInHiCNode);
     getConsensusPart(id2, h, 0, scaffoldb, numHiCNode, hicnode, consensusPositionInHiCNode);
 
-	std::cerr << scaffolda[0].id << std::endl;
-	std::cerr << scaffoldb[0].id << std::endl;
-
     HiCNode newHiCNode;
     newHiCNode.numScaffold = scaffolda.size() + scaffoldb.size();
-
-	std::cerr << "numScaffold:" << newHiCNode.numScaffold << std::endl;
 
     newHiCNode.scaffold = scaffolda;
     for (long i = 0; i < scaffoldb.size(); ++i) {
@@ -14219,8 +14031,6 @@ void PairedDBG::uniteHiCNode(long id1, long id2, char h, long gap, long &numHiCN
         newHiCNode.scaffold.push_back(tmpConsensusPart);
     }
     newHiCNode.length = newHiCNode.scaffold.back().end;
-
-	std::cerr << newHiCNode.length << std::endl;
 
     hicnode[id2Index(consensusPositionInHiCNode[id2Index(id1)].id)].state |= SC_DEL;
     hicnode[id2Index(consensusPositionInHiCNode[id2Index(id2)].id)].state |= SC_DEL;
@@ -14231,25 +14041,17 @@ void PairedDBG::uniteHiCNode(long id1, long id2, char h, long gap, long &numHiCN
         consensusPositionInHiCNode[id2Index(id)].offset = i;
     }
     hicnode.push_back(newHiCNode);
-
-	std::cerr << "finish unite" << std::endl;
-
 }
 //
 
 //added by ouchi
 std::array<long, 2> PairedDBG::cutHiCNode(long id, char h, long offset, long &numHiCNode, vector<HiCNode> &hicnode, vector<platanus::Position> &consensusPositionInHiCNode, std::unordered_set<long>& dividedConsensusIDs, vector<vector<long> > &physicalCoverage, vector<vector<long> > &diffCoverage, long numThread)
 {
-	std::cerr << "cutHiCNode:" << id << "\toffset:" << offset << std::endl;
     const long EDGE_LENGTH = 0;
     std::array<long, 2> result;
 
     vector<ConsensusPart> scaffold;
     getConsensusPart(id, h, 0, scaffold, numHiCNode, hicnode, consensusPositionInHiCNode);
-	for (long j = 0; j < scaffold.size(); ++j) {
-		std::cerr << "id:" << scaffold[j].id << ", s:" << scaffold[j].start << ", e:" << scaffold[j].end << ", ";
-	}
-	std::cerr << std::endl;
     HiCNode newHiCNode1, newHiCNode2;
     std::array<std::array<long, 2>, 2> newConsensusNodes;
     newConsensusNodes[0][0] = 0;
@@ -14271,7 +14073,6 @@ std::array<long, 2> PairedDBG::cutHiCNode(long id, char h, long offset, long &nu
                 newConsensusNodes = divideConsensusNode(scaffold[i].id, offset - scaffold[i].start, numThread, 1);
                 dividedConsensusIDs.insert(abs(scaffold[i].id));
                 consensusPositionInHiCNode.resize(numConsensusNode);
-				std::cerr << scaffold[i].id << "\t" << physicalCoverage[id2Index(scaffold[i].id)].size() << "\t" << diffCoverage[id2Index(scaffold[i].id)].size() << "\t" << consensusnode[id2Index(newConsensusNodes[0][0])].length << "\t" << consensusnode[id2Index(newConsensusNodes[1][0])].length << "\t" << newConsensusNodes[0][1] << "\t" << newConsensusNodes[1][1] << std::endl;
                 physicalCoverage.resize(numConsensusNode);
                 if (scaffold[i].id > 0) {
                     vector<long> tmpCov(physicalCoverage[id2Index(scaffold[i].id)].begin(), physicalCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[0][0])].length);
@@ -14724,21 +14525,12 @@ void PairedDBG::detectBreakpointBasedOnConsensusCoverage(long consensusIndex, ve
 //added by ouchi
 std::array<std::array<long, 2>, 2> PairedDBG::divideConsensusNode(long consensusID, long offset, long numThread, char mode)
 {
-	std::cerr << "divideConesnsusNode:" << consensusID << "\t" << offset <<  std::endl;
     const long EDGE_LENGTH = 0;
     std::array<std::array<long, 2>, 2> result;
     ConsensusNode &tmpConsensus = consensusnode[id2Index(consensusID)];
     if (consensusID < 0)
         offset = tmpConsensus.length - offset;
     long newConsensusID = numConsensusNode + 1;
-
-	for (long h = 0; h < 2; ++h) {
-		std::cerr << "h:" << h << ":  ";
-		for (long j = 0; j < tmpConsensus.numNode[h]; ++j) {
-			std::cerr << "id:" << tmpConsensus.node[h][j].id << ", s:" << tmpConsensus.node[h][j].start << ", e:" << tmpConsensus.node[h][j].end << ", ";
-		}
-		std::cerr << std::endl;
-	}
 
     ConsensusNode NewConsensus1, NewConsensus2;
     std::pair<long, std::array<std::array<long, 2>, 2> > dividedNodes;
@@ -14929,7 +14721,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideConsensusNode(long consensus
     ConsensusNode& newConsensus1 = consensusnode[id2Index(consensusID)];
     ConsensusNode& newConsensus2 = consensusnode[id2Index(newConsensusID)];
 
-	std::cerr << "update edge" << std::endl;
     //update edge
     if (mode == 1) {
         for (char h = 0; h < 2; ++h) {
@@ -15116,8 +14907,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideConsensusNode(long consensus
         result[1][0] = consensusID;
         result[1][1] = newConsensus1.length;
     }
-	std::cerr << "divide Consensus finish" <<std::endl;
-	std::cerr << "result\t" << result[0][0] << "\t" << result[0][1] << "\t" << result[1][0] << "\t" <<  result[1][1] << std::endl;
     return result;
 
 }
@@ -15126,20 +14915,12 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideConsensusNode(long consensus
 //added by ouchi
 std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offset, long numThread, char mode)
 {
-	std::cerr << "divideNode:" << nodeID << "\t" << offset << std::endl;
     const long EDGE_LENGTH = 0;
     std::array<std::array<long, 2>, 2> result;
     GraphNode& tmpNode = node[id2Index(nodeID)];
     if (nodeID < 0)
         offset = tmpNode.length - offset;
     long newNodeID = numNode + 1;
-
-	for (long j = 0; j < tmpNode.numContig; ++j) {
-		std::cerr << "id:" << tmpNode.contig[j].id << ", s:" << tmpNode.contig[j].start << ", e:" << tmpNode.contig[j].end << ", ";
-	}
-	std::cerr << std::endl;
-
-	std::cerr << "newNodeID:" << newNodeID << std::endl;
 
     GraphNode newNode1, newNode2;
     long i;
@@ -15166,7 +14947,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
             break;
         }
     }
-	std::cerr << "makenewNode" << std::endl;
     for (long j = 0; j < i; ++j) {
         ++newNode1.numContig;
         newNode1.contig.emplace_back(tmpNode.contig[j].id, tmpNode.contig[j].start, tmpNode.contig[j].end);
@@ -15190,7 +14970,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
         }
     }
 
-	std::cerr << "update length" << std::endl;
     long start = newNode1.contig.front().start;
     long end = newNode1.contig.back().end;
     for (long j = 0; j < newNode1.numContig; ++j) {
@@ -15222,11 +15001,8 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
     }
     newNode2.length = end - start;
 
-    std::cerr << "update contigPositionInScaffold" << std::endl;
-	std::cerr << "numContig:" << numContig << "\tcontigPositionInScaffold.size():" << contigPositionInScaffold.size() << std::endl;
     for (long j = 0; j < newNode1.numContig; ++j) {
         long tmp = id2Index(newNode1.contig[j].id);
-		std::cerr << tmp << ":" << contigPositionInScaffold[tmp].size() << ", ";
         for (auto itr = contigPositionInScaffold[tmp].begin(); itr != contigPositionInScaffold[tmp].end();) {
             if (abs(itr->id) == abs(nodeID))
                 itr = contigPositionInScaffold[tmp].erase(itr);
@@ -15234,10 +15010,8 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 ++itr;
         }
     }
-	std::cerr << std::endl;
     for (long j = 0; j < newNode2.numContig; ++j) {
         long tmp = id2Index(newNode2.contig[j].id);
-		std::cerr << tmp << ":" << contigPositionInScaffold[tmp].size() << ", ";
         for (auto itr = contigPositionInScaffold[tmp].begin(); itr != contigPositionInScaffold[tmp].end();) {
             if (abs(itr->id) == abs(nodeID))
                 itr = contigPositionInScaffold[tmp].erase(itr);
@@ -15245,7 +15019,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 ++itr;
         }
     }
-	std::cerr << std::endl;
     for (long j = 0; j < newNode1.numContig; ++j) {
         if (newNode1.contig[j].id > 0)
             contigPositionInScaffold[id2Index(newNode1.contig[j].id)].emplace_back(j, abs(nodeID));
@@ -15259,7 +15032,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
             contigPositionInScaffold[id2Index(newNode2.contig[j].id)].emplace_back(j, -abs(newNodeID));
     }
 
-	std::cerr << "update mplinks, hiclinks, longlinks" << std::endl;
     //update edge, MPLinks, HiCLinks, LongLink
     newNode1.MPLinks.clear();
     if (allLibraryMT != NULL)
@@ -15277,7 +15049,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 tmpLink.direction = mplink.direction;
                 tmpLink.end = mplink.end;
 				if (mplink.end == 0 || abs(mplink.end) > node.size()) {
-					std::cerr << "mplink.end: " << mplink.end << "\tMPLinkID:" << MPLinkID << "\tMPLinks.size()" << tmpNode.MPLinks[libraryID].size() <<std::endl;
 					continue;
 				}
                 if (abs(mplink.end) != abs(nodeID)) {
@@ -15417,7 +15188,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 const LongLink& longlink = tmpNode.LongLinks[LongLinkID];
                 LongLink tmpLink;
 				if (longlink.end == 0 || abs(longlink.end) > node.size()) {
-					std::cerr << "longlink.end: " << longlink.end << "\tLongLinkID:" << LongLinkID << "\tLongLinks.size()" << tmpNode.LongLinks.size() <<std::endl;
 					continue;
 				}
                 if (abs(longlink.end) != abs(nodeID)) {
@@ -15489,7 +15259,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
         }
     }
 
-	std::cerr << "update edges" << std::endl;
     if (mode == 1) {
         vector<long> ids;
         for (long edgeID = 0; edgeID < tmpNode.numEdge; ++edgeID) {
@@ -15561,11 +15330,9 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 LinkedNode.edge[n].end = sign(mplink.end) * abs(nodeID);
             }
         }
-		std::cerr << "adjust edgeLength" << std::endl;
         for (long edgeIndex = 0; edgeIndex < NewNode1.numEdge; ++edgeIndex) {
             NewNode1.edge[edgeIndex].length /= NewNode1.edge[edgeIndex].numLink;
         }
-		std::cerr << "adjust edgeLength finish" << std::endl;
         for (long libraryID = 0; libraryID < NewNode2.MPLinks.size(); ++libraryID) {
             for (long MPLinkID = 0; MPLinkID < NewNode2.MPLinks[libraryID].size(); ++MPLinkID) {
                 const MPLink& mplink = NewNode2.MPLinks[libraryID][MPLinkID];
@@ -15613,11 +15380,9 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
                 LinkedNode.edge[n].end = sign(mplink.end) * abs(newNodeID);
             }
         }
-		std::cerr << "adjust edgeLength" << std::endl;
         for (long edgeIndex = 0; edgeIndex < NewNode2.numEdge; ++edgeIndex) {
             NewNode2.edge[edgeIndex].length /= NewNode2.edge[edgeIndex].numLink;
         }
-		std::cerr << "finish adjust edgeLength" << std::endl;
         for (long nodeID = 0; nodeID < numNode; ++nodeID) {
             GraphNode &tmp = node[nodeID];
             std::sort(tmp.edge.begin(), tmp.edge.begin() + tmp.numEdge);
@@ -15627,7 +15392,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
             }
         }
     }
-	std::cerr << "update edge finish" << std::endl;
     //update numMappedTag Unimplemented
 
 
@@ -15642,8 +15406,7 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
         result[1][0] = nodeID;
         result[1][1] = NewNode1.length;
     }
-	std::cerr << "divide Node finish" << std::endl;
-	std::cerr << "result\t" << result[0][0] << "\t" << result[0][1] << "\t" << result[1][0] << "\t" <<  result[1][1] << std::endl;
+
     return result;
 }
 //
@@ -15651,7 +15414,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideNode(long nodeID, long offse
 //added by ouchi
 std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long offset, long numThread)
 {
-	std::cerr << "dividecontig:" << contigID << "\t" << offset <<  std::endl;
     std::array<std::array<long, 2>, 2> result;
     platanus::SEQ &tmpContig = contig[id2Index(contigID)];
     long contigLength = tmpContig.length;
@@ -15665,7 +15427,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long o
     contigPreviousParentNodeID.resize(numContig, 0);
     contigPreviousParentNodeID[id2Index(contigID)] = 0;
 
-	std::cerr << "update mapping info" << std::endl;
     //update mapping info
     if (allLibraryMT != NULL) {
         vector<vector<SeqLib> > tmpAllLibraryMT;
@@ -15940,7 +15701,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long o
     //10X read Unimplemented
     //contigTagCounterUchar
 
-	std::cerr << "update overlaptable" << std::endl;
     //update overlapTable
     vector<vector<Overlap> > addedOverlap(TABLE_DIVID);
     # pragma omp parallel for schedule(dynamic)
@@ -15982,7 +15742,6 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long o
         overlapTable[mod][std::pair<int, int>(mergedAddedOverlap[i].id1, mergedAddedOverlap[i].id2)] = mergedAddedOverlap[i];
     }
 
-	std::cerr << "update other contigInfo" << std::endl;
     coverage.resize(numContig);
     coverage[newContigID-1] = coverage[id2Index(contigID)];
     if (!contigNameIndex.empty()) {
@@ -16022,8 +15781,7 @@ std::array<std::array<long, 2>, 2> PairedDBG::divideContig(long contigID, long o
         result[1][0] = contigID;
         result[1][1] = offset;
     }
-	std::cerr << "divide contig finish" << std::endl;
-	std::cerr << "result\t" << result[0][0] << "\t" << result[0][1] << "\t" << result[1][0] << "\t" <<  result[1][1] << std::endl;
+
     return result;
 }
 //
@@ -16055,18 +15813,7 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 	FILE *resultPhase = platanus::makeTemporaryFile();
 
     for (long consensusIndex = 0; consensusIndex < numConsensusNode; ++consensusIndex) {
-		std::cerr << "consensusNode:" << consensusIndex + 1 << std::endl;
         const ConsensusNode& tmpConsensus = consensusnode[consensusIndex];
-
-		std::cerr << "befor phasing" << std::endl;
-		for (long i = 0; i < tmpConsensus.numNode[0]; ++i) {
-			std::cerr << "NODE:" << tmpConsensus.node[0][i].id << ", s:" << tmpConsensus.node[0][i].start << ", e:" << tmpConsensus.node[0][i].end << ", ";
-		}
-		std::cerr << std::endl;
-		for (long i = 0; i < tmpConsensus.numNode[1]; ++i) {
-			std::cerr << "NODE:" << tmpConsensus.node[1][i].id << ", s:" << tmpConsensus.node[1][i].start << ", e:" << tmpConsensus.node[1][i].end << ", ";
-		}
-		std::cerr << std::endl;
 
         vector<std::array<vector<ScaffoldPart>, 2> > blocks;
         blocks.resize(tmpConsensus.numNode[0]);
@@ -16119,7 +15866,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
             shortFlag.push_back(0);
             blockIndex[i] = numHeteroBlock-1;
         }
-		std::cerr << "numHeteroBlock: " << numHeteroBlock << std::endl;
 		long numMerge = 0;
 
 
@@ -16359,21 +16105,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
         vector<char> result(blocks.size(), 0);
         vector<vector<std::array<long, 2> > > LinkScore;
         getHeteroMPandHiCLinkScoreBetweenBlock(blocks, heteroBlocks, LinkScore);
-		std::cerr << "LinkScore:" << std::endl;
-		for (long i = 0; i < LinkScore.size(); ++i) {
-			std::cerr  << heteroBlocks[i][0]  << "\t";
-		}
-		std::cerr << std::endl;
-		for (long i = 0; i < LinkScore.size(); ++i) {
-			for (long j = 0; j < LinkScore[i].size(); ++j) {
-				if (i == j) {
-					std::cerr << "-,-\t";
-				} else {
-					std::cerr << LinkScore[i][j][0] << "," << LinkScore[i][j][1] << "\t";
-				}
-			}
-			std::cerr << std::endl;
-		}
         while(1) {
             long maxDifference = 0;
             std::array<long, 4> maxLinkPair;
@@ -16401,22 +16132,12 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
             }
             if (maxDifference == 0) break;
 
-			std::cerr << "maxDifference:" << maxDifference << "\tmaxLinkPair:" << std::endl;
-			for (long i = 0; i < heteroBlocks[maxLinkPair[0]].size(); ++i)
-				std::cerr << heteroBlocks[maxLinkPair[0]][i] << ",";
-			std::cerr << "\t";
-			for (long i = 0; i < heteroBlocks[maxLinkPair[1]].size(); ++i)
-				std::cerr << heteroBlocks[maxLinkPair[1]][i] << ",";
-			std::cerr << std::endl;
-
             if (maxLinkPair[2] > maxLinkPair[3]) {
-				std::cerr << "result: cross" << std::endl;
                 for (long i = 0; i < heteroBlocks[maxLinkPair[1]].size(); ++i) {
                     result[heteroBlocks[maxLinkPair[1]][i]] += 1;
                     result[heteroBlocks[maxLinkPair[1]][i]] = result[heteroBlocks[maxLinkPair[1]][i]] % 2;
                 }
             } else if (maxLinkPair[2] < maxLinkPair[3]) {
-				std::cerr << "result: parallel" << std::endl;
             } else {
                 break;
             }
@@ -16433,28 +16154,8 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
         }
 
 
-		std::cerr << "numMerge: " << numMerge << std::endl;
 		totalNumHetero += numHeteroBlock;
 		totalNumMerge += numMerge;
-
-		std::cerr << "after phasing" << std::endl;
-		for (long i = 0; i < blocks.size(); ++i) {
-			std::cerr << "block:" << i << ", ";
-			for (long j = 0; j < blocks[i][0].size(); ++j) {
-				std::cerr << "NODE:" << blocks[i][0][j].id << ", s:" <<blocks[i][0][j].start << ", e:" << blocks[i][0][j].end << ", ";
-			}
-			std::cerr << "|";
-		}
-		std::cerr << std::endl;
-		for (long i = 0; i < blocks.size(); ++i) {
-			std::cerr << "block:" << i << ", ";
-			for (long j = 0; j < blocks[i][1].size(); ++j) {
-				std::cerr << "NODE:" << blocks[i][1][j].id << ", s:" <<blocks[i][1][j].start << ", e:" << blocks[i][1][j].end << ", ";
-			}
-			std::cerr << "|";
-		}
-		std::cerr << std::endl;
-
 
 		//save result Phase
 		++numNewConsensusResult;
@@ -16513,12 +16214,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 			std::array<long, 2> tmp;
 			tmp[0] = heteroBlocks[i].front();
 			tmp[1] = heteroBlocks[i].back();
-
-			std::cerr << "{";
-			for (long m = 0; m < heteroBlocks[i].size(); ++m) {
-				std::cerr << heteroBlocks[i][m] << ",";
-			}
-			std::cerr << "}" << std::endl;
 
 			long j = 0;
 			for (; j < heteroRegion.size(); ++j) {
@@ -16581,7 +16276,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 						minStart = std::min(blocks[locate][0][0].start, blocks[locate][1][0].start);
 					}
 				}
-				std::cerr << "newConsensusID: " << numNewConsensusAfter << "\t" << locate << "~" << breakpoint[i]-1 << std::endl;
 				for (char h = 0; h < 2; ++h) {
 					long numNewNode = 0;
 					for (long j = locate; j < breakpoint[i]; ++j) {
@@ -16611,7 +16305,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 					minStart = std::min(blocks[locate][0][0].start, blocks[locate][1][0].start);
 				}
 			}
-			std::cerr << "newConsensusID: " << numNewConsensusAfter << "\t" << locate << "~" << blocks.size()-1 << std::endl;
 			for (char h = 0; h < 2; ++h) {
 				long numNewNode = 0;
 				for (long j = locate; j < blocks.size(); ++j) {
@@ -16703,33 +16396,9 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 
 	remakeConsensus(numNewConsensusBefore, newNodePoolSizeBefore, beforePhase);
 	fclose(beforePhase);
-	/*std::ofstream out(filePrefix + "_beforePhase.fa");
-	long numOutput = 0;
-	for (long i = 0; i < numConsensusNode; ++i) {
-		vector<char> tmpSeq;
-		++numOutput;
-		for (long h = 0; h < 2; ++h) {
-			consensus2seq(consensusnode[i], tmpSeq, h);
-			if (tmpSeq.size() == 0) continue;
-			std::ostringstream oss;
-			oss << ">seq" << numOutput << "_"
-				<< "haplotig" << h << "_"
-				<< "len" << tmpSeq.size() << "_"
-				<< "cov" << calcConsensusCoverage(consensusnode[i]) << endl;
-			out << oss.str();
-			unsigned long i;
-			for (i = 0; i < tmpSeq.size(); ++i) {
-				out << platanus::Bin2Char(tmpSeq[i]);
-				if ((i + 1) % platanus::ConstParam::OUTPUT_LINE_LENGTH == 0)
-					out.put('\n');
-			}
-			if (i % platanus::ConstParam::OUTPUT_LINE_LENGTH != 0)
-				out.put('\n');
-		}
-	}
-	out.close();*/
 	remakeConsensus(numNewConsensusAfter, newNodePoolSizeAfter, afterPhase);
 	fclose(afterPhase);
+
 	std::ofstream out2(filePrefix + "_afterPhase.fa");
 	long numOutput = 0;
 	for (long i = 0; i < numConsensusNode; ++i) {
@@ -16740,9 +16409,8 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 			if (tmpSeq.size() == 0) continue;
 			std::ostringstream oss;
 			oss << ">seq" << numOutput << "_"
-				<< "haplotig" << h << "_"
-				<< "len" << tmpSeq.size() << "_"
-				<< "cov" << calcConsensusCoverage(consensusnode[i]) << endl;
+				<< "hap" << h << "_"
+				<< "len" << tmpSeq.size() << endl;
 			out2 << oss.str();
 			unsigned long i;
 			for (i = 0; i < tmpSeq.size(); ++i) {
@@ -16757,31 +16425,6 @@ void PairedDBG::phasing(const long numThread, const string filePrefix) {
 	out2.close();
 	remakeConsensus(numNewConsensusAfter2, newNodePoolSizeAfter2, after2Phase);
 	fclose(after2Phase);
-	/*std::ofstream out3(filePrefix + "_after2Phase.fa");
-	numOutput = 0;
-	for (long i = 0; i < numConsensusNode; ++i) {
-		vector<char> tmpSeq;
-		++numOutput;
-		for (long h = 0; h < 2; ++h) {
-			consensus2seq(consensusnode[i], tmpSeq, h);
-			if (tmpSeq.size() == 0) continue;
-			std::ostringstream oss;
-			oss << ">seq" << numOutput << "_"
-				<< "haplotig" << h << "_"
-				<< "len" << tmpSeq.size() << "_"
-				<< "cov" << calcConsensusCoverage(consensusnode[i]) << endl;
-			out3 << oss.str();
-			unsigned long i;
-			for (i = 0; i < tmpSeq.size(); ++i) {
-				out3 << platanus::Bin2Char(tmpSeq[i]);
-				if ((i + 1) % platanus::ConstParam::OUTPUT_LINE_LENGTH == 0)
-					out3.put('\n');
-			}
-			if (i % platanus::ConstParam::OUTPUT_LINE_LENGTH != 0)
-				out3.put('\n');
-		}
-	}
-	out3.close();*/
 
 	remakeConsensus(numNewConsensusResult, newNodePoolSizeResult, resultPhase);
 	fclose(resultPhase);
@@ -16852,12 +16495,6 @@ void PairedDBG::getHeteroMPLinkScoreBetweenScaffold(const std::array<std::array<
         conflictpoints[1][0].resize(tmpNodes[1][0].length, 1);
         conflictpoints[1][1].resize(tmpNodes[1][1].length, 1);
     }
-
-	std::cerr << "distance:\t"
-			  << std::accumulate(conflictpoints[0][0].begin(), conflictpoints[0][0].end(), 0.0) << "\t"
-			  << std::accumulate(conflictpoints[0][1].begin(), conflictpoints[0][1].end(), 0.0) << "\t"
-			  << std::accumulate(conflictpoints[1][0].begin(), conflictpoints[1][0].end(), 0.0) << "\t"
-			  << std::accumulate(conflictpoints[1][1].begin(), conflictpoints[1][1].end(), 0.0) << std::endl;
 
     if ((tmpNodes[0][0].length == 0 || tmpNodes[0][1].length == 0) && (tmpNodes[1][0].length == 0 || tmpNodes[1][1].length == 0))
         return;
@@ -17251,11 +16888,7 @@ bool PairedDBG::checkHiCLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, 
     }
     if (locate.empty())
         return 1;
-    std::cerr << "locate:";
-    for (long j = 0; j < locate.size(); ++j) {
-        std::cerr << locate[j] << ",";
-    }
-    std::cerr << std::endl;
+
     const long binsize = HiC_CONTACTMAP_BINSIZE;
     long length1 = scaffold1.back().end - scaffold1.front().start;
     long length2 = scaffold2.back().end - scaffold2.front().start;
@@ -17299,7 +16932,6 @@ bool PairedDBG::checkHiCLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, 
 //added by ouchi
 long PairedDBG::makeContactmapOfScaffold(vector<ConsensusPart> scaffold1, vector<ConsensusPart> scaffold2, vector<vector<int> >& contactmap)
 {
-	std::cerr << "makeContactmapOfScaffold" << std::endl;
     const long binsize = HiC_CONTACTMAP_BINSIZE;
     //long length1 = 0;
     //long length2 = 0;
@@ -17311,8 +16943,6 @@ long PairedDBG::makeContactmapOfScaffold(vector<ConsensusPart> scaffold1, vector
     //}
     long length1 = scaffold1.back().end - scaffold1.front().start;
     long length2 = scaffold2.back().end - scaffold2.front().start;
-
-    std::cerr << "length1:" << length1 << "\tlength2:" << length2 << std::endl;
 
     if (length1 / binsize < 1 || length2 / binsize < 1)
         return -1;
@@ -17505,21 +17135,6 @@ long PairedDBG::makeContactmapOfScaffold(vector<ConsensusPart> scaffold1, vector
         }
     }
 
-	std::cerr << "contactmap" << std::endl;
-	for (long i = 0; i < contactmap.size(); ++i) {
-		if (i == boundary) {
-			for (long j = 0; j < contactmap[i].size(); ++j) {
-				std::cerr << "_\t";
-			}
-			std::cerr << std::endl;
-		}
-		for (long j = 0; j < contactmap[i].size(); ++j) {
-			if (j == boundary) std::cerr << "|\t";
-			std::cerr << contactmap[i][j] << "\t";
-		}
-		std::cerr << std::endl;
-	}
-
     return boundary;
 
 }
@@ -17528,21 +17143,6 @@ long PairedDBG::makeContactmapOfScaffold(vector<ConsensusPart> scaffold1, vector
 //added by ouchi
 void PairedDBG::outputConsensusFastg(const string &outputFilename)
 {
-    for (long consensusID = 0; consensusID < numConsensusNode; ++consensusID) {
-        cerr << consensusID << endl;
-        for (char h = 0; h < 2; ++h) {
-            for (long i = 0; i < consensusnode[consensusID].numNode[h]; ++i) {
-                cerr << "NODE:" << consensusnode[consensusID].node[h][i].id << ", s:" << consensusnode[consensusID].node[h][i].start << ", e:" << consensusnode[consensusID].node[h][i].end << ", ";
-            }
-            cerr << endl;
-        }
-		cerr << "EDGE:" << consensusnode[consensusID].numEdge << endl;
-		for (long edgeID = 0; edgeID < consensusnode[consensusID].numEdge; ++edgeID) {
-			ConsensusEdge &edge = consensusnode[consensusID].edge[edgeID];
-			cerr << "d:" << edge.direction << ", ID:"<< edge.end <<", l:" << edge.length << ", nl1:"<<edge.numLink[0]<< ", nl2:" << edge.numLink[1] << endl;
-		}
-    }
-
     std::ofstream out(outputFilename.c_str());
 
 	vector<string> nodeName;
@@ -17655,7 +17255,6 @@ void PairedDBG::checkHiCNode(const long numHiCNode, const vector<HiCNode> &hicno
 //added by ouchi
 void PairedDBG::outputHiCNode(const string &outFilename, const long numHiCNode, const vector<HiCNode> &hicnode)
 {
-	checkHiCNode(numHiCNode, hicnode);
     std::ofstream out(outFilename);
     long numOutputNode = 0;
     for (long hicIndex = 0; hicIndex < numHiCNode; ++hicIndex) {
@@ -17728,7 +17327,6 @@ void PairedDBG::outputHiCNode(const string &outFilename, const long numHiCNode, 
             }
         }
         newConsensus.length = max_end - min_start;
-		std::cerr << "finish make newConsensus " << hicIndex << std::endl;
 
         vector<char> nodeSeq;
         consensus2seq(newConsensus, nodeSeq);
@@ -17924,8 +17522,6 @@ void PairedDBG::mincingBubble(const string filePrefix, const long numThread)
             nonBubbleOtherOut << '>' << oss.str() << '\n';
             resultSeq[id2Index(tmpConsensus.node[1][0].id)].name = oss.str();
             printBinSeqConstLineLength(resultSeq[id2Index(tmpConsensus.node[1][0].id)].seq, nonBubbleOtherOut);
-        } else {
-            cerr << "ERROR" << endl;
         }
     }
 
@@ -18274,11 +17870,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
                     //qS.push_back(std::make_pair(alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].qEnd/insertRate, j));
                 }
                 std::sort(qS.begin(), qS.end(), [](const std::pair<long, long> &l, const std::pair<long, long> &r){return l.first < r.first;});
-				/*if (nodeIndex + 1 == 71 && preTargetNode == 32) {
-					for (long j = 0; j < qS.size(); ++j) {
-						cerr << qS[j].first << "\t" << alignments[nodeIndex][qS[j].second].qStart << "\t" << alignments[nodeIndex][qS[j].second].qEnd << "\t" << alignments[nodeIndex][qS[j].second].tStart << "\t" << alignments[nodeIndex][qS[j].second].tEnd << std::endl;
-					}
-				}*/
+
                 long qLeft = node[nodeIndex].length; long qRight = 0;
                 long tLeft = node[id2Index(preTargetNode)].length; long tRight = 0;
                 long maxAlignment = 0;
@@ -18333,21 +17925,11 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
                     if (k == qS.size()) break;
                 }
                 oppositeNodeInfo[nodeIndex].emplace_back(Alignment(qLeft, qRight, preTargetNode, tLeft, tRight, maxAlignment));
-//                std::cerr << "target: " << preTargetNode << "\t" << qLeft << ", " << qRight << ", " << tLeft << ", " << tRight << std::endl;
                 prei = i;
             }
             preTargetNode = targetNode;
         }
         std::sort(oppositeNodeInfo[nodeIndex].begin(), oppositeNodeInfo[nodeIndex].end(), [](const Alignment &l, const Alignment &r){return l.match > r.match;});
-    }
-
-    cerr << "oppositeNodeInfo" << std::endl;
-    for (long nodeIndex = 0; nodeIndex < numNode; ++nodeIndex) {
-        cerr << "nodeID:" << nodeIndex + 1 << "\t";
-        if (oppositeNodeInfo[nodeIndex].size() > 0) {
-            cerr << oppositeNodeInfo[nodeIndex][0].qStart << ", " << oppositeNodeInfo[nodeIndex][0].qEnd << ", " << oppositeNodeInfo[nodeIndex][0].tID << ", " << oppositeNodeInfo[nodeIndex][0].tStart << ", " << oppositeNodeInfo[nodeIndex][0].tEnd << ", " << oppositeNodeInfo[nodeIndex][0].match;
-        }
-        cerr << endl;
     }
 
     cerr << "initConsensusNode" << endl;
@@ -18377,17 +17959,12 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
     }
 
     for (long consensusnodeIndex = 0; consensusnodeIndex < numConsensusNode; ++consensusnodeIndex) {
-		cerr << "consensusNodeID:" << consensusnodeIndex + 1 << endl;
-		if (consensusnode[consensusnodeIndex].state & SC_INC)
-			cerr << "SC_INC" << endl;
         if (this->consensusnode[consensusnodeIndex].state & SC_INC)
             continue;
         long oppositeConsensusID = oppositeConsensusInfo[consensusnodeIndex][1];
-		cerr << "oppositeConsensusID: " << oppositeConsensusID << endl;
         if (oppositeConsensusID == 0)
             continue;
         if (this->consensusnode[id2Index(oppositeConsensusID)].state & SC_INC) {
-			cerr << "opposteConsensus is SC_INC" << endl;
             setOppositeBubbleConsensusNodebySelfAlignment(consensusnodeIndex, oppositeNodeInfo, oppositeConsensusInfo[consensusnodeIndex]);
             oppositeConsensusID = oppositeConsensusInfo[consensusnodeIndex][1];
             if (oppositeConsensusID == 0)
@@ -18399,7 +17976,6 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         if (abs(oppositeConsensusInfo[id2Index(oppositeConsensusID)][1]) != consensusnodeIndex + 1)
             continue;
 
-		cerr << "makeNewConsensus: " << numConsensusNode + 1 << endl;
         ++numConsensusNode;
         consensusnode.resize(numConsensusNode);
 
@@ -18408,7 +17984,6 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         long startConsensusNode = oppositeConsensusInfo[consensusnodeIndex][3];
         ConsensusNode& tmpConsensus1 = this->consensusnode[consensusnodeIndex];
         ConsensusNode& tmpConsensus2 = this->consensusnode[id2Index(oppositeConsensusID)];
-		cerr << "change to SC_INC:" << consensusnodeIndex + 1 << "\t" << oppositeConsensusID << endl;
         tmpConsensus1.state |= SC_INC;
         tmpConsensus2.state |= SC_INC;
         for (char h = 0; h < 2; ++h) {
@@ -18474,7 +18049,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         long min_start, max_end;
         if (newConsensus.numNode[0] < 1) {
             if (newConsensus.numNode[1] < 1) {
-                std::cerr << "error" << std::endl; //
+                std::cerr << "Warning in mincingBubbleNodeBySelfAlignment" << std::endl; //
             } else {
                 min_start = newConsensus.node[1].front().start;
                 max_end = newConsensus.node[1].back().end;
@@ -18526,29 +18101,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             }
         }
     }
-	cerr << "deleted ID: ";
-	for (long m = 0; m < DeletedID.size(); ++m) {
-		cerr << DeletedID[m] << "\t";
-	}
-    cerr << endl;
     cerr << "TOTAL_NUM_DELETE: " << numDelete << endl;
-
-    for (long consensusnodeIndex = 0; consensusnodeIndex < numConsensusNode; ++consensusnodeIndex) {
-		cerr << "consensusnodeID:" << consensusnodeIndex + 1 << endl;
-        if (consensusnode[consensusnodeIndex].state & SC_INC)
-			cerr << "SC_INC" << endl;
-        if (consensusnode[consensusnodeIndex].state & SC_DEL)
-			cerr << "SC_DEL" << endl;
-		for (long m = 0; m < consensusnode[consensusnodeIndex].numNode[0]; ++m) {
-			cerr << "id:" << consensusnode[consensusnodeIndex].node[0][m].id << ", s:" << consensusnode[consensusnodeIndex].node[0][m].start << ", e:" << consensusnode[consensusnodeIndex].node[0][m].end << ", ";
-		}
-		cerr << endl;
-		for (long m = 0; m < consensusnode[consensusnodeIndex].numNode[1]; ++m) {
-			cerr << "id:" << consensusnode[consensusnodeIndex].node[1][m].id << ", s:" << consensusnode[consensusnodeIndex].node[1][m].start << ", e:" << consensusnode[consensusnodeIndex].node[1][m].end << ", ";
-		}
-		cerr << endl;
-    }
-
 
 
     FILE* ScaffoldFP = platanus::makeTemporaryFile();
@@ -18580,7 +18133,6 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
 //added by ouchi
 bool PairedDBG::setOppositeBubbleConsensusNodebySelfAlignment(const long consensusnodeIndex, const vector<vector<Alignment> > &selfAlignments, std::array<long, 4> &oppositeConsensusInfo)
 {
-	cerr << "setOppositeBUbbleConsensusNodebySelfAlignment: " << consensusnodeIndex + 1<< endl;
     oppositeConsensusInfo = {0,0,0,0};
     const ConsensusNode &tmpConsensus = this->consensusnode[consensusnodeIndex];
     std::unordered_map<std::pair<long, char>, std::array<long, 6>, platanus::PairHash, platanus::PairEqual> countMap;
@@ -18660,7 +18212,6 @@ bool PairedDBG::setOppositeBubbleConsensusNodebySelfAlignment(const long consens
         }
 
     }
-	cerr << "finish setOpposite: " << oppositeConsensusInfo[1] << endl;
 
     return (!countMap.empty() && oppositeConsensusInfo[1] == 0);
 

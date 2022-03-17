@@ -133,10 +133,11 @@ greenhill [OPTIONS] 2>log
 ### Input format:
    Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -hic and -HIC option.
 
-### Outputs:
-   PREFIX_ConsensusOutput.fa
-
+### Final output:
    PREFIX_afterPhase.fa
+
+### Other misc outputs:
+   PREFIX_*
 
 PREFIX is specified by -o
 

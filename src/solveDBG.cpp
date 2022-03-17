@@ -153,16 +153,16 @@ void SolveDBG::usage(void) const
               << "    -tmp DIR                           : directory for temporary files (default " << optionSingleArgs.at("-tmp") << ")\n\n\n"
 
               << "Input format:\n"
-              << "    Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -x, -X, -hic and -HIC options.\n" //edited by ouchi
+              << "    Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -hic and -HIC options.\n" //edited by ouchi
               << "\n\n"
 
 
-              << "Outputs:\n"
-			  << "    PREFIX_*.fa\n"
-              << "\n"
-              << "Outputs (-fastg):\n"
-			  << "    PREFIX_lib#_graph.fastg\n"
-             << std::endl;
+              << "Final output:\n"
+			  << "    PREFIX_afterPhase.fa\n"
+			  << "\n"
+              << "Other misc outputs:\n"
+			  << "    PREFIX_*\n"
+              << std::endl;
 }
 
 

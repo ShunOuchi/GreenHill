@@ -26,6 +26,7 @@ with GreenHill; if not, write to the Free Software Foundation, Inc.,
 #include <sstream>
 #include <queue>
 #include <array>
+#include <numeric>
 
 using std::vector;
 using std::string;
@@ -12153,13 +12154,13 @@ void PairedDBG::checkLinkBetweenHiCNodePair(vector<ConsensusPart> scaffold1, vec
 			numLongReadLink[index] += 1;
         }
     }
-	
+
     for (long i = 0; i < 4; ++i) {
         if (insDistribution[i].size() != 0) {
             std::sort(insDistribution[i].begin(), insDistribution[i].end(), [](const std::pair<long, long> &left, const std::pair<long, long> &right){return left.first < right.first;});
         }
     }
-	
+
     //MPLinks > 0 (correct sign and insertLength)
     if (gapDistribution[0].size() > 0) {
         long numLink = gapDistribution[0].size();

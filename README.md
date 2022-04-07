@@ -24,11 +24,29 @@ Address for this tool: <platanus@bio.titech.ac.jp>
     - Only required to use PacBio/Oxford-Nanopore long reads.
 
 ## Installation
+### Install from source
+Install the dependencies above.
+* GCC
+* Minimap2
+Compile (make), and copy greenhill to a directory listed in PATH.
 ```sh
 git clone https://github.com/ShunOuchi/GreenHill.git
 cd src
 make
 cp greenhill <installation_path>
+```
+### Install through conda
+On a new conda environment, run:
+```sh
+conda install -c bioconda greenhill
+```
+Or, if you want to have a separate conda environment for GreenHill
+```sh
+conda create -n greenhill -c bioconda greenhill
+```
+You will then need to activate the greenhill envirionment before using it with:
+```sh
+conda activate greenhill
 ```
 
 

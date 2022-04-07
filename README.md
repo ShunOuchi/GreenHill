@@ -28,6 +28,7 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 Install the dependencies above.
 * GCC
 * Minimap2
+
 Compile (make), and copy greenhill to a directory listed in PATH.
 ```sh
 git clone https://github.com/ShunOuchi/GreenHill.git

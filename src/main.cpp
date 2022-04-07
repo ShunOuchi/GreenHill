@@ -76,6 +76,9 @@ int main(int argc, char **argv)
         if (strcmp(argv[1], "-v") == 0) {
             return 0;
         }
+        if (strcmp(argv[1], "-h") == 0) {
+            return 0;
+        }
         /*if (strcmp(argv[1], "assemble") == 0) {
             command.reset(new Assemble());
         } else if (strcmp(argv[1], "phase") == 0) {

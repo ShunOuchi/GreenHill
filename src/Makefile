@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++0x -O3 -funroll-loops -Wall -Wno-sign-compare -fopenmp -finline-limit-50000 -lm -Dnullptr=0 -g #-fsanitize=address -fno-omit-frame-pointer
+CXXFLAGS = -std=c++0x -O3 -funroll-loops -Wall -Wno-sign-compare -fopenmp -finline-limit=50000 -lm -Dnullptr=0 -g #-fsanitize=address -fno-omit-frame-pointer
 
 
 PRG = greenhill

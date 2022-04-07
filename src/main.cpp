@@ -77,7 +77,7 @@ int main(int argc, char **argv)
             return 0;
         }
         if (strcmp(argv[1], "-h") == 0) {
-            Usage();
+            command->usage();
             return 0;
         }
         /*if (strcmp(argv[1], "assemble") == 0) {

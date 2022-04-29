@@ -2127,6 +2127,28 @@ void PairedDBG::extractDBGBubbleInformation()
 	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
 }
 
+void PairedDBG::extractDBGBubbleInformationWithoutOverlap()
+{
+	const double MAX_HETERO_BUBBLE_COVERAGE_FACTOR = 2.0;
+	vector<long> bubbleNodeIndex;
+
+	setOppositeBubbleNodeIDAndStateForEachNode();
+	bubbleNodeIndex.clear();
+    for (long nodeIndex = 0; nodeIndex < numNode; ++nodeIndex) {
+		vector<std::array<long, 2> > oppositeBubbleNodeID;
+		setOppositeBubbleNodeID(oppositeBubbleNodeID, this->node[nodeIndex].contig);
+		long oppositeNodeID = maxLengthContigID(oppositeBubbleNodeID, 0, oppositeBubbleNodeID.size());
+		if (oppositeNodeID != 0) {
+			bubbleNodeIndex.push_back(nodeIndex);
+		}
+	}
+	if (this->heteroCoverage <= 0.0) {
+		calculateHeteroCoverage(bubbleNodeIndex);
+		this->averageCoverage = 2.0 * this->heteroCoverage;
+	}
+	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
+}
+
 long PairedDBG::crushSimpleDBGBubble()
 {
     const double coverageThreshold = heteroCoverage * 3.0;
@@ -7815,7 +7837,6 @@ void PairedDBG::setOppositeBubbleContigIDByEndMatch()
 	}
 }
 
-//added by ouchi
 void PairedDBG::setOppositeBubbleContigIDByIndex()
 {
 	//const double COVERAGE_THRESHOLD = HETERO_FORK_COVERAGE_THRESHOLD_FACTOR * this->heteroCoverage;
@@ -7832,13 +7853,7 @@ void PairedDBG::setOppositeBubbleContigIDByIndex()
 			contigBubbleInfo[i].oppositeContigID[1] = i + 1 - this->numInputBubbleContig / 2;
 		}
 	}
-
-//	for (long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
-//		std::cerr << "contigID:" << i << "\t" << contigBubbleInfo[i].oppositeContigID[0] << "\t" << contigBubbleInfo[i].oppositeContigID[1] << std::endl;
-//	}
-
 }
-//
 
 void PairedDBG::setOppositeBubbleContigIDByOneEndMatch()
 {

@@ -16,7 +16,7 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 ## Requirements
 * GCC
     - <https://gcc.gnu.org/>
-    - version >= 4.4, with OpenMP
+    - version >= 4.8, with OpenMP
     - To compile the source code.
 
 * Minimap2
@@ -171,7 +171,7 @@ used in most of the UNIX OSs, are utilized.
 
 * Minimap2
 
-This tool is used to align PacBio/Oxford-Nanopore long reads.
+This tool is used to align PacBio/Oxford-Nanopore long reads and to do self align.
 When long reads are input through the -p option, please check Minimap2 is installed as "minimap2" command
 or specify the path of Minimap2 using the -mapper option.
 

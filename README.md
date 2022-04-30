@@ -21,7 +21,7 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 
 * Minimap2
     - <https://github.com/lh3/minimap2>
-    - Only required to use PacBio/Oxford-Nanopore long reads.
+    - For mapping PacBio/Oxford-Nanopore long reads, and doing self align.
 
 ## Installation
 ### Install from source

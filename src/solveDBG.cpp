@@ -188,7 +188,6 @@ void SolveDBG::initializeParameters(void)
 		}
 	}
 
-/*
 	if (!(optionMultiArgs["-c"].empty()))
 		contigMaxK = platanus::Contig().getMaxKFromFastaHeader(optionMultiArgs["-c"][0]);
 	else
@@ -196,7 +195,6 @@ void SolveDBG::initializeParameters(void)
 
 	if (seedLength  > contigMaxK - 1)
 		seedLength = contigMaxK - 1;
-*/
 
     keyLength = std::min(seedLength, platanus::ConstParam::SCAFFOLD_HASH_OVERLAP);
     bubbleThreshold = atof(optionSingleArgs["-u"].c_str());
@@ -316,9 +314,8 @@ void SolveDBG::exec(void)
 		pairedDBG.setHeteroCoverage(40); //added by ouchi for FALCON-Unzip Input
 
 	pairedDBG.setOppositeBubbleContigIDByIndex();
-	pairedDBG.setBubbleJunctionContigIDOverlapped();
-
 	pairedDBG.extractDBGBubbleInformationWithoutOverlap();
+	pairedDBG.setBubbleJunctionContigIDOverlapped();
 	pairedDBG.clearEdges();
 
 	extendConsensusToEstimateInsertSize();
@@ -327,9 +324,8 @@ void SolveDBG::exec(void)
 	pairedDBG.setMode(PairedDBG::OVERLAP_MODE);
 	pairedDBG.setCutoffLength(0);
 	pairedDBG.makeGraph(numThread);
-
+	pairedDBG.setOppositeBubbleContigIDByIndex();
 	pairedDBG.extractDBGBubbleInformationWithoutOverlap();
-
 	pairedDBG.clearEdges();
 
 	if (optionBool["-3D"]) {
@@ -1842,7 +1838,7 @@ void SolveDBG::extendConsensusToEstimateInsertSize(void)
 	pairedDBG.joinUnambiguousNodePairIterative(numThread);
 
 	pairedDBG.makeGraph(numThread);
-	pairedDBG.setOppositeBubbleContigIDOverlapped(numThread);
+	pairedDBG.setOppositeBubbleContigIDByIndex();
 	pairedDBG.deleteSecondaryBubbleNodeAndEdge(numThread);
 	pairedDBG.clearEdges();
 	pairedDBG.makeScaffold();

@@ -4163,7 +4163,7 @@ void PairedDBG::joinUnambiguousNodePairIterative(const long numThread)
 	cerr << endl << "joining unambiguous pair of nodes in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 //		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 //		deleteNonOverlapHomoEdge();
 		num = joinUnambiguousNodePair(numThread);
@@ -4211,7 +4211,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairIterative(const long numThre
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -4234,7 +4234,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairAllLibrariesIterative(const 
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph using all libraries.." << endl;
 	do {
 		makeGraphAllLibraries(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -7846,11 +7846,9 @@ void PairedDBG::setOppositeBubbleContigIDByIndex()
 
 	for (unsigned long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
 		if (i < this->node.size() - this->numInputBubbleContig / 2) {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1+ this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 + this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 + this->numInputBubbleContig / 2);
 		} else {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1 - this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 - this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 - this->numInputBubbleContig / 2);
 		}
 	}
 }
@@ -18195,7 +18193,6 @@ bool PairedDBG::setOppositeBubbleConsensusNodebySelfAlignment(const long consens
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+1] = offset;
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+2] = selfAlignments[id2Index(nodeID)][i].match;
                     }
-//                    break;
                 }
             }
         }

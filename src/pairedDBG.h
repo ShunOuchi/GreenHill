@@ -557,6 +557,7 @@ public:
 	void getOverlappedNode(const long sourceNodeIndex, const char targetDirection, std::vector<long> &nodeIDBuffer);
 	long getNumEdgeOneDirection(const GraphNode &targetNode, const char targetDirection);
 	void extractDBGBubbleInformation();
+	void extractDBGBubbleInformationWithoutOverlap();
 	void calculateHeteroAndAverageCoverageUnphase();
 	void markHeteroNode(const double maxHeteroCoverageFactor);
 	void deleteNonOverlapHomoEdge();

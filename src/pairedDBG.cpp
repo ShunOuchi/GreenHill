@@ -17991,6 +17991,8 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             if (oppositeConsensusID == 0)
                 continue;
         }
+		if (oppositeConsensusInfo[id2Index(oppositeConsensusID)][1] == 0)
+			continue;
         if (this->consensusnode[id2Index(oppositeConsensusInfo[id2Index(oppositeConsensusID)][1])].state & SC_INC) {
             setOppositeBubbleConsensusNodebySelfAlignment(id2Index(oppositeConsensusID), oppositeNodeInfo, oppositeConsensusInfo[id2Index(oppositeConsensusID)]);
         }

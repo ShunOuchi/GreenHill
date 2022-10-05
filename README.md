@@ -1,12 +1,36 @@
-# GreenHill README.md
+# GreenHill
+![starts](https://img.shields.io/github/stars/ShunOuchi/GreenHill) ![license](https://img.shields.io/github/license/ShunOuchi/GreenHill) ![repo-size](https://img.shields.io/github/repo-size/ShunOuchi/GreenHill) ![last-commit](https://img.shields.io/github/last-commit/ShunOuchi/GreenHill) ![Conda](https://img.shields.io/conda/v/bioconda/greenhill) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/ShunOuchi/GreenHill) [![Anaconda-Server Badge](https://anaconda.org/bioconda/greenhill/badges/installer/conda.svg)](https://anaconda.org/bioconda/greenhill) [![BioConda Install](https://img.shields.io/conda/dn/bioconda/greenhill.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/greenhill) [![GitHub Downloads](https://img.shields.io/github/downloads/ShunOuchi/GreenHill/total.svg?style=social&logo=github&label=Download)](https://github.com/ShunOuchi/GreenHill/releases)  [![Build Status](https://github.com/ShunOuchi/GreenHill/actions/workflows/make.yaml/badge.svg)](https://github.com/ShunOuchi/GreenHill/actions)
+
+
+- [GreenHill](#greenhill)
+  - [Description](#description)
+  - [Author](#author)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Install from source](#install-from-source)
+    - [Install through conda](#install-through-conda)
+  - [Synopsis](#synopsis)
+    - [Inputs](#inputs)
+    - [Commands](#commands)
+    - [Final output](#final-output)
+  - [Example](#example)
+    - [Example 1. I have Platanus-allee assembly (Haplotype-aware style input)](#example-1-i-have-platanus-allee-assembly-haplotype-aware-style-input)
+    - [Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)](#example-2-i-have-falcon-unzip-assembly-psuedo-haplotype-style-input)
+    - [Example 3. I have Canu assembly (Mixed-haplotype style input)](#example-3-i-have-canu-assembly-mixed-haplotype-style-input)
+  - [Usage](#usage)
+    - [Command](#command)
+    - [Options](#options)
+    - [Input format:](#input-format)
+    - [Final output:](#final-output-1)
+    - [Other misc outputs:](#other-misc-outputs)
+  - [Notes](#notes)
+
 
 ## Description
 GreenHill is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
 GreenHill generates chromosome-level haplotypes by scaffolding and phasing
 the input contigs using a combination of information from Hi-C and other reads (PE, MP, LongRead).
 
-## Version
-v1.0.0
 
 ## Author
 Shun Ouchi and Rei Kajitani at Tokyo Institute of Technology wrote key source codes.

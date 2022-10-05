@@ -18,22 +18,3 @@ jobs:
       run: make
       working-directory: ./src
 
-  #
-  # miniconda_linux:
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: conda-incubator/setup-miniconda@v2
-  #       with:
-  #         activate-environment: test
-  #         environment-file: coverm.yml
-  #         auto-activate-base: false
-  #         mamba-version: "*"
-  #         channels: conda-forge,defaults,bioconda
-  #     - run: |
-  #         conda info
-  #         conda list
-  #     - name: Run test
-  #       run: |
-  #           cargo test

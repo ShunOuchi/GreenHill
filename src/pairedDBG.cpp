@@ -2127,6 +2127,28 @@ void PairedDBG::extractDBGBubbleInformation()
 	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
 }
 
+void PairedDBG::extractDBGBubbleInformationWithoutOverlap()
+{
+	const double MAX_HETERO_BUBBLE_COVERAGE_FACTOR = 2.0;
+	vector<long> bubbleNodeIndex;
+
+	setOppositeBubbleNodeIDAndStateForEachNode();
+	bubbleNodeIndex.clear();
+    for (long nodeIndex = 0; nodeIndex < numNode; ++nodeIndex) {
+		vector<std::array<long, 2> > oppositeBubbleNodeID;
+		setOppositeBubbleNodeID(oppositeBubbleNodeID, this->node[nodeIndex].contig);
+		long oppositeNodeID = maxLengthContigID(oppositeBubbleNodeID, 0, oppositeBubbleNodeID.size());
+		if (oppositeNodeID != 0) {
+			bubbleNodeIndex.push_back(nodeIndex);
+		}
+	}
+	if (this->heteroCoverage <= 0.0) {
+		calculateHeteroCoverage(bubbleNodeIndex);
+		this->averageCoverage = 2.0 * this->heteroCoverage;
+	}
+	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
+}
+
 long PairedDBG::crushSimpleDBGBubble()
 {
     const double coverageThreshold = heteroCoverage * 3.0;
@@ -4141,7 +4163,7 @@ void PairedDBG::joinUnambiguousNodePairIterative(const long numThread)
 	cerr << endl << "joining unambiguous pair of nodes in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 //		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 //		deleteNonOverlapHomoEdge();
 		num = joinUnambiguousNodePair(numThread);
@@ -4189,7 +4211,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairIterative(const long numThre
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -4212,7 +4234,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairAllLibrariesIterative(const 
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph using all libraries.." << endl;
 	do {
 		makeGraphAllLibraries(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -7815,7 +7837,6 @@ void PairedDBG::setOppositeBubbleContigIDByEndMatch()
 	}
 }
 
-//added by ouchi
 void PairedDBG::setOppositeBubbleContigIDByIndex()
 {
 	//const double COVERAGE_THRESHOLD = HETERO_FORK_COVERAGE_THRESHOLD_FACTOR * this->heteroCoverage;
@@ -7825,20 +7846,12 @@ void PairedDBG::setOppositeBubbleContigIDByIndex()
 
 	for (unsigned long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
 		if (i < this->node.size() - this->numInputBubbleContig / 2) {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1+ this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 + this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 + this->numInputBubbleContig / 2);
 		} else {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1 - this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 - this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 - this->numInputBubbleContig / 2);
 		}
 	}
-
-//	for (long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
-//		std::cerr << "contigID:" << i << "\t" << contigBubbleInfo[i].oppositeContigID[0] << "\t" << contigBubbleInfo[i].oppositeContigID[1] << std::endl;
-//	}
-
 }
-//
 
 void PairedDBG::setOppositeBubbleContigIDByOneEndMatch()
 {
@@ -17978,6 +17991,8 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             if (oppositeConsensusID == 0)
                 continue;
         }
+		if (oppositeConsensusInfo[id2Index(oppositeConsensusID)][1] == 0)
+			continue;
         if (this->consensusnode[id2Index(oppositeConsensusInfo[id2Index(oppositeConsensusID)][1])].state & SC_INC) {
             setOppositeBubbleConsensusNodebySelfAlignment(id2Index(oppositeConsensusID), oppositeNodeInfo, oppositeConsensusInfo[id2Index(oppositeConsensusID)]);
         }
@@ -18180,7 +18195,6 @@ bool PairedDBG::setOppositeBubbleConsensusNodebySelfAlignment(const long consens
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+1] = offset;
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+2] = selfAlignments[id2Index(nodeID)][i].match;
                     }
-//                    break;
                 }
             }
         }

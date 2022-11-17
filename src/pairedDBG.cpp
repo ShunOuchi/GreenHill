@@ -17885,7 +17885,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             targetNode = tmpAlignment.tID;
             if (preTargetNode != targetNode || i == alignments[nodeIndex].size() - 1) {
                 vector<std::pair<long, long> > qS;
-                for (long j = prei; j < i; ++j) {
+                for (long j = prei; j <= i; ++j) {
 					double insertRate = (double)(alignments[nodeIndex][j].qEnd - alignments[nodeIndex][j].qStart) / (alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].tStart);
                     qS.push_back(std::make_pair(alignments[nodeIndex][j].tStart - alignments[nodeIndex][j].qStart/insertRate, j));
                     //qS.push_back(std::make_pair(alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].qEnd/insertRate, j));

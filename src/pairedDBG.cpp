@@ -17832,7 +17832,7 @@ void PairedDBG::calculateBaseCoverage(vector<vector<double> >& baseCoverage, con
 //added by ouchi
 void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, const long numThread)
 {
-	const double MIN_IDT = 0.8;
+	const double MIN_IDT = 0.9;
 	const double MIN_ALN_COV = 0.5;
     string oneLine, preQName(""), qName, tName, strand;
     long qLength, qStart, qEnd, tLength, tStart, tEnd, match, alnLen; //, readLength=0;

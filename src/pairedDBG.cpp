@@ -17832,8 +17832,10 @@ void PairedDBG::calculateBaseCoverage(vector<vector<double> >& baseCoverage, con
 //added by ouchi
 void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, const long numThread)
 {
+	const double MIN_IDT = 0.9;
+	const double MIN_ALN_COV = 0.5;
     string oneLine, preQName(""), qName, tName, strand;
-    long qLength, qStart, qEnd, tLength, tStart, tEnd, match; //, readLength=0;
+    long qLength, qStart, qEnd, tLength, tStart, tEnd, match, alnLen; //, readLength=0;
     //long threadIndex = 0;
 
     vector<Alignment> alignmentBuffer;
@@ -17847,7 +17849,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
     while(1) {
         getline(ifs, oneLine);
         std::istringstream ss(oneLine);
-        ss >> qName >> qLength >> qStart >> qEnd >> strand >> tName >> tLength >> tStart >> tEnd >> match;
+        ss >> qName >> qLength >> qStart >> qEnd >> strand >> tName >> tLength >> tStart >> tEnd >> match >> alnLen;
         if (ifs.eof() || preQName != qName) {
             if (!alignmentBuffer.empty()) {
  //               size_t bufferSize = alignmentBuffer.size();
@@ -17862,7 +17864,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             if (ifs.eof())
                 break;
         }
-        if (qName != tName) {
+        if (qName != tName && (double)match / alnLen >= MIN_IDT) {
             long orient;
             if (strand == "+")
                 orient = 1;
@@ -17880,10 +17882,10 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         std::sort(alignments[nodeIndex].begin(), alignments[nodeIndex].end());
         long targetNode; long preTargetNode = alignments[nodeIndex][0].tID;
         long prei = 0;
-        for (long i = 0; i < alignments[nodeIndex].size(); ++i) {
-            const Alignment &tmpAlignment = alignments[nodeIndex][i];
-            targetNode = tmpAlignment.tID;
-            if (preTargetNode != targetNode || i == alignments[nodeIndex].size() - 1) {
+        for (long i = 0; i <= alignments[nodeIndex].size(); ++i) {
+		if (i < alignments[nodeIndex].size())
+	            targetNode = alignments[nodeIndex][i].tID;
+            if (preTargetNode != targetNode || i == alignments[nodeIndex].size()) {
                 vector<std::pair<long, long> > qS;
                 for (long j = prei; j < i; ++j) {
 					double insertRate = (double)(alignments[nodeIndex][j].qEnd - alignments[nodeIndex][j].qStart) / (alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].tStart);
@@ -17894,11 +17896,13 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
 
                 long qLeft = node[nodeIndex].length; long qRight = 0;
                 long tLeft = node[id2Index(preTargetNode)].length; long tRight = 0;
+				long qLen = node[nodeIndex].length;
+				long tLen = node[id2Index(preTargetNode)].length;
                 long maxAlignment = 0;
                 for (long j = 0; j < qS.size(); ++j) {
                     long tmpSum = 0; long tmpNum = 0;
-                    long tmpQLeft = node[nodeIndex].length; long tmpQRight = 0;
-                    long tmpTLeft = node[id2Index(preTargetNode)].length; long tmpTRight = 0;
+                    long tmpQLeft = qLen; long tmpQRight = 0;
+                    long tmpTLeft = tLen; long tmpTRight = 0;
 //                    vector<long> tmpCover(node[nodeIndex].length, 0);
                     vector<std::pair<long, long> > tmpRange;
                     long k;
@@ -17945,7 +17949,9 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
                     }
                     if (k == qS.size()) break;
                 }
-                oppositeNodeInfo[nodeIndex].emplace_back(Alignment(qLeft, qRight, preTargetNode, tLeft, tRight, maxAlignment));
+
+				if (maxAlignment >= MIN_ALN_COV * std::min(qLen, tLen))
+					oppositeNodeInfo[nodeIndex].emplace_back(Alignment(qLeft, qRight, preTargetNode, tLeft, tRight, maxAlignment));
                 prei = i;
             }
             preTargetNode = targetNode;

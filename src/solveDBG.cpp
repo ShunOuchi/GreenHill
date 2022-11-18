@@ -1759,7 +1759,7 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 	if (optionBool["-minimap2_tophit"])
 		oss << " -p 1 -N 1";
 	if (contigFilenames == readFilenames)
-		oss << " -P";
+		oss << " -D --secondary=no";
 	//
 
 	bool bzip2Flag = false;

@@ -17882,12 +17882,12 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         std::sort(alignments[nodeIndex].begin(), alignments[nodeIndex].end());
         long targetNode; long preTargetNode = alignments[nodeIndex][0].tID;
         long prei = 0;
-        for (long i = 0; i < alignments[nodeIndex].size(); ++i) {
-            const Alignment &tmpAlignment = alignments[nodeIndex][i];
-            targetNode = tmpAlignment.tID;
-            if (preTargetNode != targetNode || i == alignments[nodeIndex].size() - 1) {
+        for (long i = 0; i <= alignments[nodeIndex].size(); ++i) {
+		if (i < alignments[nodeIndex].size())
+	            targetNode = alignments[nodeIndex][i].tID;
+            if (preTargetNode != targetNode || i == alignments[nodeIndex].size()) {
                 vector<std::pair<long, long> > qS;
-                for (long j = prei; j <= i; ++j) {
+                for (long j = prei; j < i; ++j) {
 					double insertRate = (double)(alignments[nodeIndex][j].qEnd - alignments[nodeIndex][j].qStart) / (alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].tStart);
                     qS.push_back(std::make_pair(alignments[nodeIndex][j].tStart - alignments[nodeIndex][j].qStart/insertRate, j));
                     //qS.push_back(std::make_pair(alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].qEnd/insertRate, j));

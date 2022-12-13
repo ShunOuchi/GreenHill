@@ -19,7 +19,7 @@ def main(file_name):
             for m in contig_re.finditer(seq):
                 ctg_start = pre_gap_end - ((pre_gap_end - pre_gap_start) // 2 + (pre_gap_end - pre_gap_start) % 2)
                 ctg_end = m.start() + ((m.end() - m.start()) // 2)
-                print(f">{name}:::ctg_{frag_i} {record_i} {ctg_end - ctg_start}")
+                print(f">{name}:::fragment_{frag_i} {record_i} {ctg_end - ctg_start}")
                 record_list.append(record_i)
                 record_i += 1
                 frag_i += 1
@@ -27,7 +27,7 @@ def main(file_name):
                 pre_gap_end = m.end()
             ctg_start = pre_gap_end - ((pre_gap_end - pre_gap_start) // 2 + (pre_gap_end - pre_gap_start) % 2)
             ctg_end = len(seq)
-            print(f">{name}:::ctg_{frag_i} {record_i} {ctg_end - ctg_start}")
+            print(f">{name}:::fragment_{frag_i} {record_i} {ctg_end - ctg_start}")
             record_list.append(record_i)
             record_i += 1
             frag_i += 1

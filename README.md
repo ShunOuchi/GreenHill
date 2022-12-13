@@ -206,7 +206,7 @@ path_juicer=/path/to/juicer
 path_3d=/path/to/3d_dna_pipeline
 path_greenhill=/path/to/greenhill
 
-seqkit sort -lr out_AfterPhase.fa >base.fa
+seqkit sort -lr out_afterPhase.fa >base.fa
 bwa index base.fa >bwa_index.log 2>&1
 seqkit fx2tab -nl base.fa >base.sizes
 
@@ -216,7 +216,7 @@ $path_3d/visualize/run-assembly-visualizer.sh base.assembly aligned/merged_nodup
 python $path_greenhill/utils/fasta_to_juicebox_assembly.py base.fa >base.ctg_info.assembly
 ```
 Then, you can input `base.hic` and `base.ctg_info.assembly` into [Juicebox](https://github.com/aidenlab/Juicebox). See the [cookbook](https://aidenlab.org/assembly/manual_180322.pdf) for the details of the review process.
-
+![JBAT screenshot](images/JBAT_screenshot.png)
 
 ---
 ## Notes

@@ -193,6 +193,32 @@ PREFIX is specified by -o
 
 
 ---
+## Manual review with Juicebox
+Resulting scaffolds can be reviewed and curated with Juicebox Assembly Tool (JBAT). This can be accomplished using the programs below:
+- [seqkit](https://bioinf.shenwei.me/seqkit/)
+- juicer.sh ([Juicdbox](https://github.com/aidenlab/Juicebox))
+- generate-assembly-file-from-fasta.awk ([3D-DNA pipeline](https://github.com/aidenlab/3d-dna))
+- run-assembly-visualizer.sh ([3D-DNA pipeline](https://github.com/aidenlab/3d-dna))
+- fasta_to_juicebox_assembly.py (in the utils directory)
+### Command example
+```sh
+path_juicer=/path/to/juicer
+path_3d=/path/to/3d_dna_pipeline
+path_greenhill=/path/to/greenhill
+
+seqkit sort -lr out_AfterPhase.fa >base.fa
+bwa index base.fa >bwa_index.log 2>&1
+seqkit fx2tab -nl base.fa >base.sizes
+
+juicer.sh -D $path_juicer -d $PWD -g base -s none -z base.fa -p base.sizes >juicer.log.o 2>juicer.log.e
+awk -f $path_3d/utils/generate-assembly-file-from-fasta.awk base.fa >base.assembly 2>generate.log.e
+$path_3d/visualize/run-assembly-visualizer.sh base.assembly aligned/merged_nodups.txt >visualizer.log.o 2>visualizer.log.e
+python $path_greenhill/utils/fasta_to_juicebox_assembly.py base.fa >base.ctg_info.assembly
+```
+Then, you can input `base.hic` and `base.ctg_info.assembly` into [Juicebox](https://github.com/aidenlab/Juicebox). See the [cookbook](https://aidenlab.org/assembly/manual_180322.pdf) for the details of the review process.
+
+
+---
 ## Notes
 * Compressed input files
 

@@ -218,6 +218,12 @@ python $path_greenhill/utils/fasta_to_juicebox_assembly.py base.fa >base.ctg_inf
 Then, you can input `base.hic` and `base.ctg_info.assembly` into [Juicebox](https://github.com/aidenlab/Juicebox). See the [cookbook](https://aidenlab.org/assembly/manual_180322.pdf) for the details of the review process.
 ![JBAT screenshot](images/JBAT_screenshot.png)
 
+Finally, the reviwed assembly file, `base.ctg_info.review.assembly` (output of "Export Assembly" in Juicebox), is converted into the final FASTA file. 
+```sh
+$path_3d/run-asm-pipeline-post-review.sh -r base.ctg_info.review.assembly base.fa aligned/merged_nodups.txt >post_review.log.o 2>post_review.log.e
+```
+
+
 ---
 ## Notes
 * Compressed input files

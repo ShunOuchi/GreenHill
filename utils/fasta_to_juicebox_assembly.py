@@ -2,29 +2,35 @@
 
 import sys
 import re
+from math import ceil, floor
 
 
 def main(file_name):
-    contig_re = re.compile(r"[acgtACGT]+")
+    contig_re = re.compile(r"[nN]+")
     record_lists = []
     with open(file_name) as fin:
         record_i = 1
         record_list = []
         for (name, seq) in read_fasta(fin):
             frag_i = 1
-            pre_end = 0
+            pre_gap_start = 0
+            pre_gap_end = 0
             record_list = []
             for m in contig_re.finditer(seq):
-                if pre_end != 0:
-                    print(f">{name}:::gap_{frag_i} {record_i} {m.start() - pre_end}")
-                    record_list.append(record_i)
-                    record_i += 1
-                    frag_i += 1
-                print(f">{name}:::ctg_{frag_i} {record_i} {m.end() - m.start()}")
+                ctg_start = pre_gap_end - ((pre_gap_end - pre_gap_start) // 2 + (pre_gap_end - pre_gap_start) % 2)
+                ctg_end = m.start() + ((m.end() - m.start()) // 2)
+                print(f">{name}:::fragment_{frag_i} {record_i} {ctg_end - ctg_start}")
                 record_list.append(record_i)
                 record_i += 1
                 frag_i += 1
-                pre_end = m.end()
+                pre_gap_start = m.start()
+                pre_gap_end = m.end()
+            ctg_start = pre_gap_end - ((pre_gap_end - pre_gap_start) // 2 + (pre_gap_end - pre_gap_start) % 2)
+            ctg_end = len(seq)
+            print(f">{name}:::fragment_{frag_i} {record_i} {ctg_end - ctg_start}")
+            record_list.append(record_i)
+            record_i += 1
+            frag_i += 1
             record_lists.append(record_list)
 
         for record_list in record_lists:

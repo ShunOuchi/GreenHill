@@ -1,12 +1,43 @@
-# GreenHill README.md
+# GreenHill
+![starts](https://img.shields.io/github/stars/ShunOuchi/GreenHill)
+![license](https://img.shields.io/github/license/ShunOuchi/GreenHill) 
+![repo-size](https://img.shields.io/github/repo-size/ShunOuchi/GreenHill) 
+![last-commit](https://img.shields.io/github/last-commit/ShunOuchi/GreenHill) 
+![Conda](https://img.shields.io/conda/v/bioconda/greenhill) 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/ShunOuchi/GreenHill)
+[![BioConda Install](https://img.shields.io/conda/dn/bioconda/greenhill.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/greenhill) 
+[![Build Status](https://github.com/ShunOuchi/GreenHill/actions/workflows/make.yaml/badge.svg)](https://github.com/ShunOuchi/GreenHill/actions)
+
+
+- [GreenHill](#greenhill)
+  - [Description](#description)
+  - [Author](#author)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Install from source](#install-from-source)
+    - [Install through conda](#install-through-conda)
+  - [Synopsis](#synopsis)
+    - [Inputs](#inputs)
+    - [Commands](#commands)
+    - [Final output](#final-output)
+  - [Example](#example)
+    - [Example 1. I have Platanus-allee assembly (Haplotype-aware style input)](#example-1-i-have-platanus-allee-assembly-haplotype-aware-style-input)
+    - [Example 2. I have FALCON-Unzip assembly (Psuedo-haplotype style input)](#example-2-i-have-falcon-unzip-assembly-psuedo-haplotype-style-input)
+    - [Example 3. I have Canu assembly (Mixed-haplotype style input)](#example-3-i-have-canu-assembly-mixed-haplotype-style-input)
+  - [Usage](#usage)
+    - [Command](#command)
+    - [Options](#options)
+    - [Input format:](#input-format)
+    - [Final output:](#final-output-1)
+    - [Other misc outputs:](#other-misc-outputs)
+  - [Notes](#notes)
+
 
 ## Description
 GreenHill is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
 GreenHill generates chromosome-level haplotypes by scaffolding and phasing
 the input contigs using a combination of information from Hi-C and other reads (PE, MP, LongRead).
 
-## Version
-v1.0.0
 
 ## Author
 Shun Ouchi and Rei Kajitani at Tokyo Institute of Technology wrote key source codes.
@@ -159,6 +190,38 @@ greenhill [OPTIONS] 2>log
    PREFIX_*
 
 PREFIX is specified by -o
+
+
+---
+## Manual review with Juicebox
+Resulting scaffolds can be reviewed and curated with Juicebox Assembly Tool (JBAT). This can be accomplished using the programs below:
+- [seqkit](https://bioinf.shenwei.me/seqkit/)
+- juicer.sh ([Juicdbox](https://github.com/aidenlab/Juicebox))
+- generate-assembly-file-from-fasta.awk ([3D-DNA pipeline](https://github.com/aidenlab/3d-dna))
+- run-assembly-visualizer.sh ([3D-DNA pipeline](https://github.com/aidenlab/3d-dna))
+- fasta_to_juicebox_assembly.py (in the utils directory)
+### Command example
+```sh
+path_juicer=/path/to/juicer
+path_3d=/path/to/3d_dna_pipeline
+path_greenhill=/path/to/greenhill
+
+seqkit sort -lr out_afterPhase.fa >base.fa
+bwa index base.fa >bwa_index.log 2>&1
+seqkit fx2tab -nl base.fa >base.sizes
+
+juicer.sh -D $path_juicer -d $PWD -g base -s none -z base.fa -p base.sizes >juicer.log.o 2>juicer.log.e
+awk -f $path_3d/utils/generate-assembly-file-from-fasta.awk base.fa >base.assembly 2>generate.log.e
+$path_3d/visualize/run-assembly-visualizer.sh base.assembly aligned/merged_nodups.txt >visualizer.log.o 2>visualizer.log.e
+python $path_greenhill/utils/fasta_to_juicebox_assembly.py base.fa >base.ctg_info.assembly
+```
+Then, you can input `base.hic` and `base.ctg_info.assembly` into [Juicebox](https://github.com/aidenlab/Juicebox). See the [cookbook](https://aidenlab.org/assembly/manual_180322.pdf) for the details of the review process.
+![JBAT screenshot](images/JBAT_screenshot.png)
+
+Finally, the reviwed assembly file, `base.ctg_info.review.assembly` (output of "Export Assembly" in Juicebox), is converted into the final FASTA file. 
+```sh
+$path_3d/run-asm-pipeline-post-review.sh -r base.ctg_info.review.assembly base.fa aligned/merged_nodups.txt >post_review.log.o 2>post_review.log.e
+```
 
 
 ---

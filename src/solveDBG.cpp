@@ -100,6 +100,12 @@ SolveDBG::SolveDBG()
     optionBool["-minialign"] = false;
     optionBool["-kmer_align"] = false;
 
+    // for mince parameter
+    optionBool["-secondary_yes"] = false; //added by ouchi
+    optionSingleArgs["-mince_minIdentity"] = "0"; //added by ouchi
+    optionSingleArgs["-mince_minAlnCov"] = "0"; //added by ouchi
+    //
+
     optionBool["-fastg"] = false;
     optionBool["-aggressive"] = false;
 }
@@ -173,14 +179,12 @@ void SolveDBG::initializeParameters(void)
 {
 	seedLength = platanus::ConstParam::SCAFFOLD_HASH_OVERLAP;
     multiSeedLengthForShortRead.clear();
-	//if (!(optionPairFile.empty())) { //deleted by ouchi
-		for (auto itr = optionMultiArgs["-s"].begin(); itr != optionMultiArgs["-s"].end(); ++itr) {
-			unsigned length = std::stoi(*itr);
-			multiSeedLengthForShortRead.push_back(length);
-			if (seedLength > length)
-				seedLength = length;
-		}
-	//} //deleted by ouchi
+	for (auto itr = optionMultiArgs["-s"].begin(); itr != optionMultiArgs["-s"].end(); ++itr) {
+		unsigned length = std::stoi(*itr);
+		multiSeedLengthForShortRead.push_back(length);
+		if (seedLength > length)
+			seedLength = length;
+	}
 	if (optionBool["-kmer_align"] && !(optionMultiArgs["-p"].empty())) {
 		for (auto itr = optionMultiArgs["-S"].begin(); itr != optionMultiArgs["-S"].end(); ++itr) {
 			unsigned length = std::stoi(*itr);
@@ -190,11 +194,19 @@ void SolveDBG::initializeParameters(void)
 		}
 	}
 
+	if (!(optionMultiArgs["-c"].empty()))
+		contigMaxK = platanus::Contig().getMaxKFromFastaHeader(optionMultiArgs["-c"][0]);
+	else
+		contigMaxK = platanus::Contig().getMaxKFromFastaHeader(optionMultiArgs["-cph"][0]);
+
+	if (seedLength  > contigMaxK - 1)
+		seedLength = contigMaxK - 1;
+
     keyLength = std::min(seedLength, platanus::ConstParam::SCAFFOLD_HASH_OVERLAP);
     bubbleThreshold = atof(optionSingleArgs["-u"].c_str());
     minLink = atoi(optionSingleArgs["-l"].c_str());
     minLinkToPhase = atoi(optionSingleArgs["-k"].c_str());
-    minOverlapForScaffolding = atoi(optionSingleArgs["-v"].c_str());
+    minOverlapForScaffolding = std::min(atoi(optionSingleArgs["-v"].c_str()), (int)(contigMaxK - 1));
     numThread = atoi(optionSingleArgs["-t"].c_str());
     pairedDBG.setSeedLength(seedLength);
     pairedDBG.setMinTolerenceFactor(MIN_TOL_FACTOR);
@@ -207,13 +219,13 @@ void SolveDBG::initializeParameters(void)
     for (unsigned i = 0; i < optionPairFile.size(); ++i) {
         ++(numFilePerLibraryID[numLibrary]);
         libraryIDList[numLibrary] = optionPairFile[i].libraryID;
-        if (i + 1 < optionPairFile.size()) { //added by ouchi
+        if (i + 1 < optionPairFile.size()) {
             if (optionPairFile[i].libraryID != optionPairFile[i + 1].libraryID) {
                 ++numLibrary;
             }
-        } else { //added by ouchi
-            ++numLibrary; //added by ouchi
-        } //added by ouchi
+        } else {
+            ++numLibrary;
+        }
     }
 
     libraryMT.resize(numLibrary);
@@ -304,70 +316,28 @@ void SolveDBG::exec(void)
 		return;
 	}
 
-//	pairedDBG.calcPercentilValue(95, numThread); //added by ouchi
-
-    if (optionMultiArgs["-cph"].size() > 0) //added by ouchi
+    if (optionMultiArgs["-cph"].size() > 0)
 		pairedDBG.setHeteroCoverage(40); //added by ouchi for FALCON-Unzip Input
 
-	pairedDBG.extractDBGBubbleInformation();
+	pairedDBG.setOppositeBubbleContigIDByIndex();
+	pairedDBG.extractDBGBubbleInformationWithoutOverlap();
+	pairedDBG.setBubbleJunctionContigIDOverlapped();
 	pairedDBG.clearEdges();
 
 	extendConsensusToEstimateInsertSize();
 	pairedDBG.resetGraph();
 
-
 	pairedDBG.setMode(PairedDBG::OVERLAP_MODE);
 	pairedDBG.setCutoffLength(0);
 	pairedDBG.makeGraph(numThread);
-
-
-	pairedDBG.extractDBGBubbleInformation();
-//	pairedDBG.setOppositeForkContigIDOverlapped(numThread);
-	pairedDBG.setOppositeBubbleContigIDOverlapped(numThread);
-	pairedDBG.setOppositeBubbleContigIDByEndMatch();
-
-    if (optionMultiArgs["-cph"].size() > 0) //added by ouchi
-		pairedDBG.setOppositeBubbleContigIDByIndex(); //added by ouchi for FALCON-Unzip Input
-//	pairedDBG.setOppositeBubbleContigIDByOneEndMatch();
-
-//	pairedDBG.setForkJunctionContigIDOverlapped();
-	pairedDBG.setBubbleJunctionContigIDOverlapped();
-
+	pairedDBG.setOppositeBubbleContigIDByIndex();
+	pairedDBG.extractDBGBubbleInformationWithoutOverlap();
 	pairedDBG.clearEdges();
 
-/*
-	pairedDBG.setMode(PairedDBG::LONG_READ_LINK_MODE | PairedDBG::LENGTH_CUTOFF_MODE | PairedDBG::PREVIOUS_DIVISION_AWARE_MODE);
-	pairedDBG.setCutoffLength(MIN_LONG_READ_LENGTH_CUTOFF_FACTOR * LONG_READ_LENGTH_CUTOFF_UNIT_FACTOR * longReadLibraryMT[0].getAverageInsSize());
-	pairedDBG.setTolerence(pairedDBG.getCutoffLength()/2);
-	pairedDBG.setMinLink(1);
-	pairedDBG.makeGraph(numThread);
-	std::ostringstream outStream;
-	outStream << optionSingleArgs["-o"] << "_longLIB.fastg";
-	pairedDBG.outputFastg(outStream.str());
-	exit(0);
-// */
-
-	//////added by ouchi
 	if (optionBool["-3D"]) {
-
-		//pairedDBG.calcIdealContact(numThread);
-		//pairedDBG.divideNodeBasedOnHiC(numThread);
-//		exit(0);
-
 		pairedDBG.initConsensusNode(numThread);
 		std::cerr << "mergeHeteroNode" << std::endl;
 		pairedDBG.mergeHeteroNode(numThread);
-
-		/*pairedDBG.setMode(PairedDBG::LONG_READ_LINK_MODE | PairedDBG::LENGTH_CUTOFF_MODE | PairedDBG::PREVIOUS_DIVISION_AWARE_MODE);
-		pairedDBG.setCutoffLength(MIN_LONG_READ_LENGTH_CUTOFF_FACTOR * LONG_READ_LENGTH_CUTOFF_UNIT_FACTOR * longReadLibraryMT[0].getAverageInsSize());
-		pairedDBG.setTolerence(pairedDBG.getCutoffLength()/2);
-		//pairedDBG.setTargetLibraryIndex(libraryMT.size() - 1);
-		pairedDBG.setMinLink(1);
-		pairedDBG.makeConsensusGraph(numThread);
-		std::ostringstream outStream5;
-		outStream5 << optionSingleArgs["-o"] << "outIteration_consensus.fastg";
-		pairedDBG.outputConsensusFastg(outStream5.str());
-		exit(0);*/
 
 		pairedDBG.setMinOverlap(minOverlapForScaffolding);
 
@@ -1258,7 +1228,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 				contig.setNameIndex();
 
                 //added by ouchi
-                mapper->contigMap.setNumInputBubbleContig(contig.numSeq - j);
+                mapper->contigMap.setNumInputBubbleContig(contig.numSeq - j, contig.numSeq);
                 //
 
                 this->contigMaxK = contig.getMaxKFromFastaHeader(optionMultiArgs["-c"][0]);
@@ -1794,8 +1764,12 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 	//added by ouchi
 	if (optionBool["-minimap2_tophit"])
 		oss << " -p 1 -N 1";
-	if (contigFilenames == readFilenames)
-		oss << " -P";
+	if (contigFilenames == readFilenames) {
+		oss << " -D";
+		if (!(optionBool["-secondary_yes"])) {
+			oss << " --secondary=no";
+		}
+	}
 	//
 
 	bool bzip2Flag = false;
@@ -1874,7 +1848,7 @@ void SolveDBG::extendConsensusToEstimateInsertSize(void)
 	pairedDBG.joinUnambiguousNodePairIterative(numThread);
 
 	pairedDBG.makeGraph(numThread);
-	pairedDBG.setOppositeBubbleContigIDOverlapped(numThread);
+	pairedDBG.setOppositeBubbleContigIDByIndex();
 	pairedDBG.deleteSecondaryBubbleNodeAndEdge(numThread);
 	pairedDBG.clearEdges();
 	pairedDBG.makeScaffold();
@@ -2081,6 +2055,9 @@ void SolveDBG::mincingBubble(std::unique_ptr<HeteroMapper> &mapper, platanus::Co
     string alignerOutFilename(optionSingleArgs["-o"]);
     alignerOutFilename += "_selfAlignment.tsv";
     execMinimap2(optionMultiArgs["-cph"], optionMultiArgs["-b"], optionMultiArgs["-cph"], alignerOutFilename, numThread, "minimap2");
+
+    pairedDBG.setMinceMinIdentity(std::stod(optionSingleArgs["-mince_minIdentity"])/100);
+    pairedDBG.setMinceAlnCov(std::stod(optionSingleArgs["-mince_minAlnCov"])/100);
 
     pairedDBG.mincingBubble(optionSingleArgs["-o"], numThread);
 

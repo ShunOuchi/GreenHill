@@ -52,6 +52,7 @@ void Mapper::setContig(platanus::Contig &contig)
 {
     numSeq = contig.numSeq;
     seq = std::move(contig.seq);
+    seqPoolSize = 0;
     for (auto it = seq.begin(), end = seq.end(); it != end; ++it)
         seqPoolSize += it->base.size();
 

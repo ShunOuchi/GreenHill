@@ -368,9 +368,13 @@ void ScaffoldGraph::initScaffolding(std::vector<unsigned short> &cov, Mapper &ma
     numNode = numContig;
     averageCoverage = ave;
     bubbleThreshold = bubble;
+    node.clear();
     node.resize(numNode);
+    contigPositionInScaffold.clear();
     contigPositionInScaffold.resize(numContig);
+    numBubble.clear();
     numBubble.resize(numContig, 0);
+    contigState.clear();
 	contigState.resize(numContig, 0);
 
     // # pragma omp parallel for schedule(dynamic)

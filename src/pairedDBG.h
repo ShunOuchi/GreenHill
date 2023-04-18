@@ -472,6 +472,11 @@ protected:
     //std::vector<platanus::Position> consensusPositionInHiCNode;
     //
 
+	// added by ouchi
+	double minceMinIdentity;
+	double minceAlnCov;
+	//
+
 	// for node-state
     static const unsigned DBG_HETERO;
 	static const unsigned DBG_PRIMARY_BUBBLE;
@@ -548,6 +553,8 @@ public:
 	void unsetMode(unsigned bits) { mode &= ~bits; }
 	void setHeteroCoverage(const double cov) { heteroCoverage = cov; }
 	void setNumInputBubbleContig(const unsigned long num) {numInputBubbleContig = num; }
+	void setMinceMinIdentity(const double minID) { minceMinIdentity = minID; } //added by ouchi
+	void setMinceAlnCov(const double cov) { minceAlnCov = cov; } //added by ouchi
 
 	unsigned getMode() { return mode; }
 
@@ -557,6 +564,7 @@ public:
 	void getOverlappedNode(const long sourceNodeIndex, const char targetDirection, std::vector<long> &nodeIDBuffer);
 	long getNumEdgeOneDirection(const GraphNode &targetNode, const char targetDirection);
 	void extractDBGBubbleInformation();
+	void extractDBGBubbleInformationWithoutOverlap();
 	void calculateHeteroAndAverageCoverageUnphase();
 	void markHeteroNode(const double maxHeteroCoverageFactor);
 	void deleteNonOverlapHomoEdge();

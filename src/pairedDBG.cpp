@@ -2122,8 +2122,32 @@ void PairedDBG::extractDBGBubbleInformation()
 	getOverlappedBubbleNodeIndex(bubbleNodeIndex);
 	if (this->heteroCoverage <= 0.0) {
 		calculateHeteroCoverage(bubbleNodeIndex);
-		this->averageCoverage = 2.0 * this->heteroCoverage;
+		//this->averageCoverage = 2.0 * this->heteroCoverage;
 	}
+	this->averageCoverage = 2.0 * this->heteroCoverage;
+	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
+}
+
+void PairedDBG::extractDBGBubbleInformationWithoutOverlap()
+{
+	const double MAX_HETERO_BUBBLE_COVERAGE_FACTOR = 2.0;
+	vector<long> bubbleNodeIndex;
+
+	setOppositeBubbleNodeIDAndStateForEachNode();
+	bubbleNodeIndex.clear();
+    for (long nodeIndex = 0; nodeIndex < numNode; ++nodeIndex) {
+		vector<std::array<long, 2> > oppositeBubbleNodeID;
+		setOppositeBubbleNodeID(oppositeBubbleNodeID, this->node[nodeIndex].contig);
+		long oppositeNodeID = maxLengthContigID(oppositeBubbleNodeID, 0, oppositeBubbleNodeID.size());
+		if (oppositeNodeID != 0) {
+			bubbleNodeIndex.push_back(nodeIndex);
+		}
+	}
+	if (this->heteroCoverage <= 0.0) {
+		calculateHeteroCoverage(bubbleNodeIndex);
+		//this->averageCoverage = 2.0 * this->heteroCoverage;
+	}
+	this->averageCoverage = 2.0 * this->heteroCoverage;
 	markBubbleHeteroNode(bubbleNodeIndex, MAX_HETERO_BUBBLE_COVERAGE_FACTOR);
 }
 
@@ -4141,7 +4165,7 @@ void PairedDBG::joinUnambiguousNodePairIterative(const long numThread)
 	cerr << endl << "joining unambiguous pair of nodes in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 //		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 //		deleteNonOverlapHomoEdge();
 		num = joinUnambiguousNodePair(numThread);
@@ -4189,7 +4213,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairIterative(const long numThre
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph.." << endl;
 	do {
 		makeGraph(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -4212,7 +4236,7 @@ void PairedDBG::solveUniquePathBetweenLinkedNodePairAllLibrariesIterative(const 
 	cerr << endl << "solving unique paths guided by linked path in a de Bruijn graph using all libraries.." << endl;
 	do {
 		makeGraphAllLibraries(numThread);
-		extractDBGBubbleInformation();
+		extractDBGBubbleInformationWithoutOverlap();
 		markHeteroNode(MAX_HETERO_COVERAGE_FACTOR);
 		deleteNonOverlapHomoEdge();
 		num = solveUniquePathBetweenLinkedNodePair(numThread);
@@ -7815,7 +7839,6 @@ void PairedDBG::setOppositeBubbleContigIDByEndMatch()
 	}
 }
 
-//added by ouchi
 void PairedDBG::setOppositeBubbleContigIDByIndex()
 {
 	//const double COVERAGE_THRESHOLD = HETERO_FORK_COVERAGE_THRESHOLD_FACTOR * this->heteroCoverage;
@@ -7825,20 +7848,12 @@ void PairedDBG::setOppositeBubbleContigIDByIndex()
 
 	for (unsigned long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
 		if (i < this->node.size() - this->numInputBubbleContig / 2) {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1+ this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 + this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 + this->numInputBubbleContig / 2);
 		} else {
-			contigBubbleInfo[i].oppositeContigID[0] = i + 1 - this->numInputBubbleContig / 2;
-			contigBubbleInfo[i].oppositeContigID[1] = i + 1 - this->numInputBubbleContig / 2;
+			contigBubbleInfo[i].oppositeContigID.fill(i + 1 - this->numInputBubbleContig / 2);
 		}
 	}
-
-//	for (long i = this->node.size() - this->numInputBubbleContig; i < this->node.size(); ++i) {
-//		std::cerr << "contigID:" << i << "\t" << contigBubbleInfo[i].oppositeContigID[0] << "\t" << contigBubbleInfo[i].oppositeContigID[1] << std::endl;
-//	}
-
 }
-//
 
 void PairedDBG::setOppositeBubbleContigIDByOneEndMatch()
 {
@@ -13518,6 +13533,10 @@ void PairedDBG::calcHiCLinkScore(const long L, vector<HiCConsensusEdge> &es, lon
 
     std::stable_sort(graphLinkPool.begin(), graphLinkPool.end());
 
+    es.clear();
+    if (graphLinkPool.empty()) return;
+
+
     vector<ConsensusLinkPoolIndex> indexes(1, 0);
     ++indexes.back().numLinks[graphLinkPool[0].h1 == graphLinkPool[0].h2];
     for (long idx = 1; idx < graphLinkPool.size(); ++idx) {
@@ -13530,7 +13549,6 @@ void PairedDBG::calcHiCLinkScore(const long L, vector<HiCConsensusEdge> &es, lon
     indexes.back().numLink = std::max(indexes.back().numLinks[0], indexes.back().numLinks[1]);
     sort(indexes.begin(), indexes.end(), ConsensusLinkPoolIndexGreater());
 
-    es.clear();
     for (unsigned long idxIndex = 0; idxIndex < indexes.size(); ++idxIndex) {
         HiCConsensusEdge HiCEdge;
         HiCEdge.numLink = indexes[idxIndex].numLink;
@@ -14084,24 +14102,24 @@ std::array<long, 2> PairedDBG::cutHiCNode(long id, char h, long offset, long &nu
                 physicalCoverage.resize(numConsensusNode);
                 if (scaffold[i].id > 0) {
                     vector<long> tmpCov(physicalCoverage[id2Index(scaffold[i].id)].begin(), physicalCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[0][0])].length);
-                    vector<long> tmpCov2(physicalCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[0][0])].length, physicalCoverage[id2Index(scaffold[i].id)].end());
+                    vector<long> tmpCov2(physicalCoverage[id2Index(scaffold[i].id)].end() - consensusnode[id2Index(newConsensusNodes[1][0])].length , physicalCoverage[id2Index(scaffold[i].id)].end());
                     physicalCoverage[id2Index(newConsensusNodes[0][0])] = tmpCov;
                     physicalCoverage[id2Index(newConsensusNodes[1][0])] = tmpCov2;
                 } else {
                     vector<long> tmpCov(physicalCoverage[id2Index(scaffold[i].id)].begin(), physicalCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[1][0])].length);
-                    vector<long> tmpCov2(physicalCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[1][0])].length, physicalCoverage[id2Index(scaffold[i].id)].end());
+                    vector<long> tmpCov2(physicalCoverage[id2Index(scaffold[i].id)].end() - consensusnode[id2Index(newConsensusNodes[0][0])].length, physicalCoverage[id2Index(scaffold[i].id)].end());
                     physicalCoverage[id2Index(newConsensusNodes[1][0])] = tmpCov;
                     physicalCoverage[id2Index(newConsensusNodes[0][0])] = tmpCov2;
                 }
                 diffCoverage.resize(numConsensusNode);
                 if (scaffold[i].id > 0) {
                     vector<long> tmpCov(diffCoverage[id2Index(scaffold[i].id)].begin(), diffCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[0][0])].length);
-                    vector<long> tmpCov2(diffCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[0][0])].length, diffCoverage[id2Index(scaffold[i].id)].end());
+                    vector<long> tmpCov2(diffCoverage[id2Index(scaffold[i].id)].end() - consensusnode[id2Index(newConsensusNodes[1][0])].length, diffCoverage[id2Index(scaffold[i].id)].end());
                     diffCoverage[id2Index(newConsensusNodes[0][0])] = tmpCov;
                     diffCoverage[id2Index(newConsensusNodes[1][0])] = tmpCov2;
                 } else {
                     vector<long> tmpCov(diffCoverage[id2Index(scaffold[i].id)].begin(), diffCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[1][0])].length);
-                    vector<long> tmpCov2(diffCoverage[id2Index(scaffold[i].id)].begin() + consensusnode[id2Index(newConsensusNodes[1][0])].length, diffCoverage[id2Index(scaffold[i].id)].end());
+                    vector<long> tmpCov2(diffCoverage[id2Index(scaffold[i].id)].end() - consensusnode[id2Index(newConsensusNodes[0][0])].length, diffCoverage[id2Index(scaffold[i].id)].end());
                     diffCoverage[id2Index(newConsensusNodes[1][0])] = tmpCov;
                     diffCoverage[id2Index(newConsensusNodes[0][0])] = tmpCov2;
                 }
@@ -17819,8 +17837,10 @@ void PairedDBG::calculateBaseCoverage(vector<vector<double> >& baseCoverage, con
 //added by ouchi
 void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, const long numThread)
 {
+	const double MIN_IDT = minceMinIdentity;
+	const double MIN_ALN_COV = minceAlnCov;
     string oneLine, preQName(""), qName, tName, strand;
-    long qLength, qStart, qEnd, tLength, tStart, tEnd, match; //, readLength=0;
+    long qLength, qStart, qEnd, tLength, tStart, tEnd, match, alnLen; //, readLength=0;
     //long threadIndex = 0;
 
     vector<Alignment> alignmentBuffer;
@@ -17834,7 +17854,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
     while(1) {
         getline(ifs, oneLine);
         std::istringstream ss(oneLine);
-        ss >> qName >> qLength >> qStart >> qEnd >> strand >> tName >> tLength >> tStart >> tEnd >> match;
+        ss >> qName >> qLength >> qStart >> qEnd >> strand >> tName >> tLength >> tStart >> tEnd >> match >> alnLen;
         if (ifs.eof() || preQName != qName) {
             if (!alignmentBuffer.empty()) {
  //               size_t bufferSize = alignmentBuffer.size();
@@ -17849,7 +17869,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             if (ifs.eof())
                 break;
         }
-        if (qName != tName) {
+        if (qName != tName && (double)match / alnLen >= MIN_IDT) {
             long orient;
             if (strand == "+")
                 orient = 1;
@@ -17867,10 +17887,10 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
         std::sort(alignments[nodeIndex].begin(), alignments[nodeIndex].end());
         long targetNode; long preTargetNode = alignments[nodeIndex][0].tID;
         long prei = 0;
-        for (long i = 0; i < alignments[nodeIndex].size(); ++i) {
-            const Alignment &tmpAlignment = alignments[nodeIndex][i];
-            targetNode = tmpAlignment.tID;
-            if (preTargetNode != targetNode || i == alignments[nodeIndex].size() - 1) {
+        for (long i = 0; i <= alignments[nodeIndex].size(); ++i) {
+		if (i < alignments[nodeIndex].size())
+	            targetNode = alignments[nodeIndex][i].tID;
+            if (preTargetNode != targetNode || i == alignments[nodeIndex].size()) {
                 vector<std::pair<long, long> > qS;
                 for (long j = prei; j < i; ++j) {
 					double insertRate = (double)(alignments[nodeIndex][j].qEnd - alignments[nodeIndex][j].qStart) / (alignments[nodeIndex][j].tEnd - alignments[nodeIndex][j].tStart);
@@ -17881,11 +17901,13 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
 
                 long qLeft = node[nodeIndex].length; long qRight = 0;
                 long tLeft = node[id2Index(preTargetNode)].length; long tRight = 0;
+				long qLen = node[nodeIndex].length;
+				long tLen = node[id2Index(preTargetNode)].length;
                 long maxAlignment = 0;
                 for (long j = 0; j < qS.size(); ++j) {
                     long tmpSum = 0; long tmpNum = 0;
-                    long tmpQLeft = node[nodeIndex].length; long tmpQRight = 0;
-                    long tmpTLeft = node[id2Index(preTargetNode)].length; long tmpTRight = 0;
+                    long tmpQLeft = qLen; long tmpQRight = 0;
+                    long tmpTLeft = tLen; long tmpTRight = 0;
 //                    vector<long> tmpCover(node[nodeIndex].length, 0);
                     vector<std::pair<long, long> > tmpRange;
                     long k;
@@ -17932,7 +17954,9 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
                     }
                     if (k == qS.size()) break;
                 }
-                oppositeNodeInfo[nodeIndex].emplace_back(Alignment(qLeft, qRight, preTargetNode, tLeft, tRight, maxAlignment));
+
+				if (maxAlignment >= MIN_ALN_COV * std::min(qLen, tLen))
+					oppositeNodeInfo[nodeIndex].emplace_back(Alignment(qLeft, qRight, preTargetNode, tLeft, tRight, maxAlignment));
                 prei = i;
             }
             preTargetNode = targetNode;
@@ -17978,6 +18002,8 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
             if (oppositeConsensusID == 0)
                 continue;
         }
+		if (oppositeConsensusInfo[id2Index(oppositeConsensusID)][1] == 0)
+			continue;
         if (this->consensusnode[id2Index(oppositeConsensusInfo[id2Index(oppositeConsensusID)][1])].state & SC_INC) {
             setOppositeBubbleConsensusNodebySelfAlignment(id2Index(oppositeConsensusID), oppositeNodeInfo, oppositeConsensusInfo[id2Index(oppositeConsensusID)]);
         }
@@ -18095,7 +18121,7 @@ void PairedDBG::mincingBubbleNodeBySelfAlignment(const std::string PAFFilename, 
     }
 
     cerr << "delete repeat consensusnode" << endl;
-    long numDelete;
+    long numDelete = 0;
 	vector<long> DeletedID;
     for (long consensusnodeIndex = 0; consensusnodeIndex < numConsensusNode; ++consensusnodeIndex) {
         if (consensusnode[consensusnodeIndex].state & SC_INC)
@@ -18180,7 +18206,6 @@ bool PairedDBG::setOppositeBubbleConsensusNodebySelfAlignment(const long consens
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+1] = offset;
                         countMap[std::make_pair(abs(oppositeConsensusID) * oppositeConsensusDirection, oh)][3*h+2] = selfAlignments[id2Index(nodeID)][i].match;
                     }
-//                    break;
                 }
             }
         }

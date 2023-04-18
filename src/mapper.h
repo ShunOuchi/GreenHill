@@ -174,7 +174,7 @@ public:
 	void readLongReadPAFfileAndSaveLink(const std::string PAFFilename, std::vector<SeqLib> &library, const long minAlignmentLength, const double minCoverage, const double minIdentity, const long tolerenceLength, const long numThread);
 
     //added by ouchi
-    void setNumInputBubbleContig(const unsigned long num) {primaryBubbleStart = numSeq - num; secondaryBubbleStart = primaryBubbleStart + num/2;}
+    void setNumInputBubbleContig(const unsigned long numB, const unsigned long numS) {primaryBubbleStart = numS - numB; secondaryBubbleStart = primaryBubbleStart + numB/2;}
     void mapReadMultiReportsMultiSeedFilteredConsideringBubble(const platanus::SEQ &read, std::vector<platanus::Position> &positionBuffer, const long minContigLength, long& bubbleFlag);
     void mapReadMultiReportsConsideringBubble(const platanus::SEQ &read, std::vector<platanus::Position> &positionBuffer, const long wordLength, const long minContigLength);
     platanus::Position mapReadConsideringBubble(const platanus::SEQ &read, std::vector<platanus::Position> &positionBuffer, const long wordLength);

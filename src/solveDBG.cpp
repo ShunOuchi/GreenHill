@@ -102,7 +102,7 @@ SolveDBG::SolveDBG()
 
     // for mince parameter
     optionBool["-secondary_yes"] = false; //added by ouchi
-    optionSingleArgs["-mince_minIdentity"] = "0"; //added by ouchi
+    optionSingleArgs["-mince_minIdentity"] = "80"; //added by ouchi
     optionSingleArgs["-mince_minAlnCov"] = "0"; //added by ouchi
     //
 

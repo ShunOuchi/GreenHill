@@ -7,7 +7,7 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/ShunOuchi/GreenHill)
 [![BioConda Install](https://img.shields.io/conda/dn/bioconda/greenhill.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/greenhill) 
 [![Build Status](https://github.com/ShunOuchi/GreenHill/actions/workflows/make.yaml/badge.svg)](https://github.com/ShunOuchi/GreenHill/actions)
-![DOI](https://zenodo.org/badge/463034252.svg)](https://zenodo.org/badge/latestdoi/463034252)
+[![DOI](https://zenodo.org/badge/463034252.svg)](https://zenodo.org/badge/latestdoi/463034252)
 
 - [GreenHill](#greenhill)
   - [Description](#description)

@@ -38,6 +38,8 @@ GreenHill is a de novo chromosome-level scaffolding and phasing tool using Hi-C.
 GreenHill generates chromosome-level haplotypes by scaffolding and phasing
 the input contigs using a combination of information from Hi-C and other reads (PE, MP, LongRead).
 
+If you use GreenHill in your work, please cite:
+>Ouchi, S., Kajitani, R. & Itoh, T. GreenHill: a de novo chromosome-level scaffolding and phasing tool using Hi-C. Genome Biol 24, 162 (2023). <https://doi.org/10.1186/s13059-023-03006-8>
 
 ## Author
 Shun Ouchi and Rei Kajitani at Tokyo Institute of Technology wrote key source codes.

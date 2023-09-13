@@ -17466,7 +17466,7 @@ void PairedDBG::outputConsensusCovTxt(const string &outputFilename, const long n
 //added by ouchi
 void PairedDBG::mincingBubble(const string filePrefix, const long numThread)
 {
-    cerr << "micing bubble scaffolds ..." << endl;
+    cerr << "mincing bubble scaffolds ..." << endl;
 
     vector<vector<double> > baseCoverage(numNode);
     for (unsigned i = 0; i < numNode; ++i) {

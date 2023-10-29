@@ -30,6 +30,7 @@
     - [Input format:](#input-format)
     - [Final output:](#final-output-1)
     - [Other misc outputs:](#other-misc-outputs)
+  - [Results](#results)
   - [Notes](#notes)
 
 
@@ -225,6 +226,18 @@ Finally, the reviwed assembly file, `base.ctg_info.review.assembly` (output of "
 $path_3d/run-asm-pipeline-post-review.sh -r base.ctg_info.review.assembly base.fa aligned/merged_nodups.txt >post_review.log.o 2>post_review.log.e
 ```
 
+---
+## Results
+The following table shows the statics of several results assembled with GreenHill v1.1.0.
+|  Species  |  Input Reads  | Input assembly | Total(Mb) | N50(Mb) | Peak Memory(GB) | Runtime(h) |
+| ---- | ---- | ---- | ----: | ----: | ----: | ----: |
+| C.elegans | PE + CLR + Hi-C | Platanus-allee | 208.8 | 17.0 | 23.54 | 0.53 |
+| Zebra finch | CLR + Hi-C | FALCON-Unzip | 2025.9 | 70.6 | 92.06 | 19.41 |
+| Black rhinoceros | HiFi + Hi-C | Hifiasm | 5325.7 | 52.3 | 26.80 | 206.37 |
+
+Runtime were measured on a computer with an Intel(R) Xeon(R) Gold 6342 CPU (2.80 GHz clocks, dual 24 cores).
+
+For more information, please see the [paper](https://doi.org/10.1186/s13059-023-03006-8).
 
 ---
 ## Notes

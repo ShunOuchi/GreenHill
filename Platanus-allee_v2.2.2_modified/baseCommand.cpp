@@ -146,7 +146,7 @@ bool BaseCommand::parseArgs(int argc, char **argv)
 int BaseCommand::divideArgvInt(char *args) const
 {
     char *moveArgs = args;
-    for (;moveArgs != '\0'; ++moveArgs) {
+    for (;*moveArgs != '\0'; ++moveArgs) {
         if (isdigit(*moveArgs)) {
             return atoi(moveArgs);
         }

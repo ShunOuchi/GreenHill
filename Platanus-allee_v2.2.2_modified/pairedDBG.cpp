@@ -26,6 +26,7 @@ with Platanus-allee; if not, write to the Free Software Foundation, Inc.,
 #include <sstream>
 #include <queue>
 #include <array>
+#include <numeric>
 
 using std::vector;
 using std::string;

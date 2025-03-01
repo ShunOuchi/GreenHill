@@ -7021,7 +7021,7 @@ void PairedDBG::calculatePhysicalCoverage(vector<vector<unsigned> >& physicalCov
 	const long readLength = (*allLibraryMT)[targetLibraryIndex][0].getAverageLength();
 
     omp_set_num_threads(numThread);
-    omp_lock_t lock[node.size()];
+    vector<omp_lock_t> lock(node.size());
     for (unsigned i = 0; i < node.size(); ++i)
         omp_init_lock(&lock[i]);
 
@@ -7130,7 +7130,7 @@ void PairedDBG::calculatePhysicalCoverage(vector<vector<unsigned> >& physicalCov
 void PairedDBG::calculateLongReadPhysicalCoverage(vector<vector<unsigned> >& physicalCoverage, const long insertTolerence, const long numThread)
 {
     omp_set_num_threads(numThread);
-    omp_lock_t lock[node.size()];
+    vector<omp_lock_t> lock(node.size());
     for (unsigned i = 0; i < node.size(); ++i)
         omp_init_lock(&lock[i]);
 
@@ -7233,7 +7233,7 @@ void PairedDBG::calculateDiffCoverage(vector<vector<unsigned> >& diffCoverage, c
 	const int readLength = (*allLibraryMT)[targetLibraryIndex][0].getAverageLength();
 
     omp_set_num_threads(numThread);
-    omp_lock_t lock[node.size()];
+    vector<omp_lock_t> lock(node.size());
     for (unsigned i = 0; i < node.size(); ++i)
         omp_init_lock(&lock[i]);
 
@@ -7330,7 +7330,7 @@ void PairedDBG::calculateLongReadDiffCoverage(vector<vector<unsigned> >& diffCov
 	const long averageInsSize = (*longReadLibraryMT)[0].getAverageInsSize() / 2;
 
     omp_set_num_threads(numThread);
-    omp_lock_t lock[node.size()];
+    vector<omp_lock_t> lock(node.size());
     for (unsigned i = 0; i < node.size(); ++i)
         omp_init_lock(&lock[i]);
 

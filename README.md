@@ -50,7 +50,7 @@ Address for this tool: <platanus@bio.titech.ac.jp>
 ## Requirements
 * GCC
     - <https://gcc.gnu.org/>
-    - version >= 4.8, with OpenMP
+    - 4.8 <= version < 12, with OpenMP
     - To compile the source code.
 
 * Minimap2

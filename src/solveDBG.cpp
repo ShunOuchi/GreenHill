@@ -1259,7 +1259,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 					bool isFastq;
 					switch (fileFormat) {
 					case platanus::UNKNOWN:
-						throw platanus::FormatError();
+						throw platanus::FormatError("Unknown format: " + optionMultiArgs["-p"][j]);
 						break;
 					case platanus::FASTA:
 						isFastq = false;
@@ -1290,7 +1290,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 					bool isFastq;
 					switch (fileFormat) {
 					case platanus::UNKNOWN:
-						throw platanus::FormatError();
+						throw platanus::FormatError("Unknown format: " + optionMultiArgs["-x"][j]);
 						break;
 					case platanus::FASTA:
 						isFastq = false;
@@ -1311,7 +1311,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 					bool isFastq;
 					switch (fileFormat1) {
 					case platanus::UNKNOWN:
-						throw platanus::FormatError();
+						throw platanus::FormatError("Unknown format: " + optionMultiArgs["-X"][j]);
 						break;
 					case platanus::FASTA:
 						isFastq = false;
@@ -1337,7 +1337,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 					bool isFastq;
 					switch (fileFormat) {
 					case platanus::UNKNOWN:
-						throw platanus::FormatError();
+						throw platanus::FormatError("Unknown format: " + optionMultiArgs["-hic"][j]);
 						break;
 					case platanus::FASTA:
 						isFastq = false;
@@ -1358,7 +1358,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
 					bool isFastq;
 					switch (fileFormat1) {
 					case platanus::UNKNOWN:
-						throw platanus::FormatError();
+						throw platanus::FormatError("Unknown format: " + optionMultiArgs["-HIC"][j]);
 						break;
 					case platanus::FASTA:
 						isFastq = false;
@@ -1388,7 +1388,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
                         platanus::FILETYPE fileFormat = checkFileFormat(optionPairFile[nowFileNumber+j].fileFirst);
                         switch (fileFormat) {
                         case platanus::UNKNOWN:
-                            throw platanus::FormatError();
+                            throw platanus::FormatError("Unknown format: " + optionPairFile[nowFileNumber+j].fileFirst);
                             break;
                         case platanus::FASTA:
                             isFastq = false;
@@ -1407,7 +1407,7 @@ void SolveDBG::readLibrary(std::unique_ptr<HeteroMapper> &mapper, platanus::Cont
                         }
                         switch (fileFormat1) {
                         case platanus::UNKNOWN:
-                            throw platanus::FormatError();
+                            throw platanus::FormatError("Unknown format: " + optionPairFile[nowFileNumber+j].fileFirst);
                             break;
                         case platanus::FASTA:
                             isFastq = false;

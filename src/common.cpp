@@ -154,6 +154,12 @@ FILE *platanus::getlineFILE(std::string &str, FILE *fp)
 	if (buffer[lineLength - 1] == '\n')
 		buffer[lineLength - 1] = '\0';
 
+	// CRLFの場合も念の為、対処
+	if (lineLength > 1) {
+		if (buffer[lineLength - 2] == '\r')
+			buffer[lineLength - 2] = '\0';
+	}
+
 	str = buffer;
 	free(buffer);
 

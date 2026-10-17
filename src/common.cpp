@@ -71,35 +71,66 @@ void platanus::setFastaFileNameAndNumber(const vector<string> fastaFileName, std
 }
 
 
+std::string platanus::shellQuote(const std::string &argument)
+{
+	std::string quoted("'");
+	for (std::string::const_iterator itr = argument.begin(); itr != argument.end(); ++itr) {
+		if (*itr == '\'')
+			quoted += "'\\''";
+		else
+			quoted += *itr;
+	}
+	quoted += "'";
+	return quoted;
+}
+
+
 platanus::FILECOMPRESSION platanus::checkFileCompression(const std::string &filename)
 {
-	std::string command("file -bL ");
-	command += filename;
+	FILE *fp = fopen(filename.c_str(), "rb");
+	if (fp == NULL)
+		throw platanus::FILEError(filename);
 
-	FILE *fp;
-	if ((fp = popen(command.c_str(), "r")) == NULL)
-        throw platanus::FILEError(filename);
+	unsigned char magic[6] = {0};
+	size_t length = fread(magic, 1, sizeof(magic), fp);
+	fclose(fp);
 
-	std::string fileCommandOut;
-	std::string oneLine;
-	while (platanus::getlineFILE(oneLine, fp) != NULL) {
-		fileCommandOut += oneLine;
-		fileCommandOut += "\n";
-	}
-
-	pclose(fp);
-
-	std::string::size_type pos;
-
-	pos = fileCommandOut.find("gzip compressed");
-	if (pos != std::string::npos && pos == 0)
+	// gzip's magic bytes also identify BGZF, which is a gzip-compatible format.
+	if (length >= 2 && magic[0] == 0x1f && magic[1] == 0x8b)
 		return platanus::FILECOMPRESSION::GZIP;
-
-	pos = fileCommandOut.find("bzip2 compressed");
-	if (pos != std::string::npos && pos == 0)
+	if (length >= 3 && magic[0] == 0x42 && magic[1] == 0x5a && magic[2] == 0x68)
 		return platanus::FILECOMPRESSION::BZIP2;
+	if (length >= 6 && magic[0] == 0xfd && magic[1] == 0x37 && magic[2] == 0x7a
+		&& magic[3] == 0x58 && magic[4] == 0x5a && magic[5] == 0x00)
+		return platanus::FILECOMPRESSION::XZ;
+	if (length >= 4 && magic[0] == 0x28 && magic[1] == 0xb5 && magic[2] == 0x2f && magic[3] == 0xfd)
+		return platanus::FILECOMPRESSION::ZSTD;
+	if (length >= 4 && ((magic[0] == 0x04 && magic[1] == 0x22 && magic[2] == 0x4d && magic[3] == 0x18)
+		|| (magic[0] == 0x02 && magic[1] == 0x21 && magic[2] == 0x4c && magic[3] == 0x18)))
+		return platanus::FILECOMPRESSION::LZ4;
 
 	return platanus::FILECOMPRESSION::UNCOMPRESSED;
+}
+
+
+std::string platanus::getDecompressionCommand(const platanus::FILECOMPRESSION format, const std::string &filename)
+{
+	const char *program = NULL;
+	switch (format) {
+	case platanus::GZIP: program = "gzip"; break;
+	case platanus::BZIP2: program = "bzip2"; break;
+	case platanus::XZ: program = "xz"; break;
+	case platanus::ZSTD: program = "zstd"; break;
+	case platanus::LZ4: program = "lz4"; break;
+	default: return std::string();
+	}
+
+	// Prefix relative paths so filenames beginning with '-' are not parsed as options.
+	std::string input = filename;
+	if (!input.empty() && input[0] != '/')
+		input = "./" + input;
+
+	return std::string(program) + " -cd " + platanus::shellQuote(input);
 }
 
 
@@ -109,18 +140,12 @@ FILE* platanus::openFileAllowingCompression(const std::string &filename, const c
 
 	FILE *fp;
 
-	if (format == platanus::FILECOMPRESSION::GZIP) {
-		std::string command("gzip -cd ");
-		command += filename;
-		fp = popen(command.c_str(), mode);
-	}
-	else if (format == platanus::FILECOMPRESSION::BZIP2) {
-		std::string command("bzip2 -cd ");
-		command += filename;
-		fp = popen(command.c_str(), mode);
+	if (format == platanus::FILECOMPRESSION::UNCOMPRESSED) {
+		fp = fopen(filename.c_str(), mode);
 	}
 	else {
-		fp = fopen(filename.c_str(), mode);
+		std::string command = getDecompressionCommand(format, filename);
+		fp = popen(command.c_str(), mode);
 	}
 
 	if (fp == NULL)
@@ -134,7 +159,7 @@ int platanus::closeFileAllowingCompression(FILE *fp, const std::string &filename
 {
 	platanus::FILECOMPRESSION format = checkFileCompression(filename);
 
-	if (format == platanus::FILECOMPRESSION::GZIP || format == platanus::FILECOMPRESSION::BZIP2) {
+	if (format != platanus::FILECOMPRESSION::UNCOMPRESSED) {
 		return pclose(fp);
 	}
 

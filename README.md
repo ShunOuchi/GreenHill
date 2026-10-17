@@ -184,7 +184,7 @@ greenhill [OPTIONS] 2>log
     -minimap2_sensitive                : sensitive mode for minimap2 (default, off; only effective with -p option)
 
 ### Input format:
-   Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -hic and -HIC option.
+   Compressed read files may use gzip/BGZF, bzip2, xz, zstd, or lz4.
 
 ### Final output:
    PREFIX_afterPhase.fa
@@ -243,9 +243,8 @@ For more information, please see the [paper](https://doi.org/10.1186/s13059-023-
 ## Notes
 * Compressed input files
 
-Both uncompressed and compressed (gzip or bzip2) FASTA/FASTQ files are accepted.
-Formats are auto-detected. Internally, "file -bL", "gzip -cd" and "bzip2 -cd" commands, which can be
-used in most of the UNIX OSs, are utilized.
+Both uncompressed and compressed FASTA/FASTQ read files are accepted. 
+Supported compression formats are gzip (including BGZF), bzip2, xz, zstd, and lz4. Compression is detected from the file's magic bytes. The corresponding `gzip`, `bzip2`, `xz`, `zstd`, or `lz4` command must be installed to read compressed inputs. Install the command-line utility for each compression format you use (for example, install `zstd` to read zstd-compressed files); installing only a library is not sufficient. These utilities must be available in `PATH`.
 
 * Minimap2
 

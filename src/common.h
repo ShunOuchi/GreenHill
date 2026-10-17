@@ -45,7 +45,7 @@ namespace platanus
     using std::vector;
     typedef unsigned long long u64_t;
 
-    enum FILECOMPRESSION {UNCOMPRESSED, GZIP, BZIP2};
+    enum FILECOMPRESSION {UNCOMPRESSED, GZIP, BZIP2, XZ, ZSTD, LZ4};
     enum FILETYPE {UNKNOWN, FASTA, FASTQ};
     enum ERROR
     {IO=0, FOPEN, TMP, FORMAT, READ, KMERDIST, MAP, BASE, COVERAGE, DOUBLEHASH, CLINK, CDIR, SCAF, SOLVE, GAP, MERGE};
@@ -314,6 +314,8 @@ namespace platanus
 	void setLimitNumFileOpenMax();
 	void setFastaFileNameAndNumber(const vector<string> fastaFileName, std::vector<std::string> &scaffoldFileName, std::vector<long> &numScaffoldInFile);
 	FILECOMPRESSION checkFileCompression(const std::string &filename);
+	std::string shellQuote(const std::string &argument);
+	std::string getDecompressionCommand(const FILECOMPRESSION format, const std::string &filename);
 	FILE *openFileAllowingCompression(const std::string &str, const char *mode);
 	int closeFileAllowingCompression(FILE *fp, const std::string &filename);
 	FILE *getlineFILE(std::string &str, FILE *fp);

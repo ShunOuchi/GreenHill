@@ -159,7 +159,7 @@ void SolveDBG::usage(void) const
               << "    -tmp DIR                           : directory for temporary files (default " << optionSingleArgs.at("-tmp") << ")\n\n\n"
 
               << "Input format:\n"
-              << "    Uncompressed and compressed (gzip or bzip2) files are accepted for -c, -ip, -IP, -op, -OP, -p, -hic and -HIC options.\n" //edited by ouchi
+              << "    Uncompressed and compressed (gzip/BGZF, bzip2, xz, zstd or lz4) files are accepted for read inputs.\n" //edited by ouchi
               << "\n\n"
 
 
@@ -1772,50 +1772,39 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 	}
 	//
 
-	bool bzip2Flag = false;
-	char bzip2TempFileName[platanus::globalTmpFileDir.size() + 7 + 1];
-	platanus::FILECOMPRESSION format;
+	bool hasReadsToDecompress = false;
+	std::string decompressedReadsTempPath;
+	std::ostringstream decompressOss;
+	bool firstDecompressionCommand = true;
 
 	for (auto itr = readFilenames.begin(); itr != readFilenames.end(); ++itr) {
-		format = platanus::checkFileCompression(*itr);
-		if (format == platanus::FILECOMPRESSION::BZIP2) {
-			bzip2Flag = true;
-			break;
+		platanus::FILECOMPRESSION format = platanus::checkFileCompression(*itr);
+		if (format == platanus::FILECOMPRESSION::UNCOMPRESSED || format == platanus::FILECOMPRESSION::GZIP) {
+			oss << " " << *itr;
+		}
+		else {
+			if (!hasReadsToDecompress) {
+				decompressedReadsTempPath = platanus::globalTmpFileDir + "/greenhill_reads_XXXXXX";
+				int fd = mkstemp(&decompressedReadsTempPath[0]);
+				if (fd == -1)
+					throw platanus::TMPError();
+				close(fd);
+				hasReadsToDecompress = true;
+			}
+			decompressOss << (firstDecompressionCommand ? "set -e; " : "; ")
+				<< platanus::getDecompressionCommand(format, *itr)
+				<< (firstDecompressionCommand ? " > " : " >> ")
+				<< platanus::shellQuote(decompressedReadsTempPath);
+			firstDecompressionCommand = false;
 		}
 	}
 
-	if (bzip2Flag) {
-		strcpy(bzip2TempFileName, platanus::globalTmpFileDir.c_str());
-		strcat(bzip2TempFileName, "/XXXXXX");
-
-        int fd = mkstemp(bzip2TempFileName);
-        if (fd == -1) {
-            throw platanus::TMPError();
-		}
-        FILE *fp = fdopen(fd, "w+");
-		fclose(fp);
-
-		std::ostringstream bzip2Oss;
-		bzip2Oss << "bzip2 -cd ";
-
-		for (auto itr = readFilenames.begin(); itr != readFilenames.end(); ++itr) {
-			format = platanus::checkFileCompression(*itr);
-			if (format == platanus::FILECOMPRESSION::BZIP2)
-				bzip2Oss << " " << *itr;
-			else
-				oss << " " << *itr;
-		}
-
-		bzip2Oss << " >"  << bzip2TempFileName;
-		if (system(bzip2Oss.str().c_str()) != 0) {
+	if (hasReadsToDecompress) {
+		if (system(decompressOss.str().c_str()) != 0) {
+			unlink(decompressedReadsTempPath.c_str());
 			throw platanus::AlignerError();
 		}
-
-		oss << " " << bzip2TempFileName;
-	}
-	else {
-		for (auto itr = readFilenames.begin(); itr != readFilenames.end(); ++itr)
-			oss << " " << *itr;
+		oss << " " << platanus::shellQuote(decompressedReadsTempPath);
 	}
 	//oss << " | cut -f1-11 "; //deleted by ouchi
 	oss << " | sort -s -k 1,1 -T " << optionSingleArgs["-tmp"]; //added by ouchi
@@ -1825,11 +1814,13 @@ void SolveDBG::execMinimap2(const vector<string> &contigFilenames, const vector<
 	std::cerr << oss.str() << std::endl << std::endl << std::endl;
 
 	if (system(oss.str().c_str()) != 0) {
+		if (hasReadsToDecompress)
+			unlink(decompressedReadsTempPath.c_str());
 		throw platanus::AlignerError();
 	}
 
-	if (bzip2Flag) {
-        unlink(bzip2TempFileName);
+	if (hasReadsToDecompress) {
+		unlink(decompressedReadsTempPath.c_str());
 	}
 
 	cerr << "minimap2 finished." << endl;
